@@ -60,7 +60,7 @@ footer{background:#110a06;color:#d9c9bb;text-align:center;padding:30px 0;font-si
 
 <section id="story"><div class="container story">
 <div class="storybox reveal"><h2>From Ankit Chat Center to ANKIT'S PURI & CHAAT.</h2><p>Your local favourite, presented as a modern food brand. This space can later tell your real story and what makes your taste special.</p><p><strong>Open daily: 3 PM – 9 PM</strong></p></div>
-<div class="quote reveal"><div><h2>“Ek plate se pet nahi, dil bharta hai.” ❤️</h2><p>Fresh • Desi • Chatpata</p></div></div>
+<div class="quote reveal"><div><h2>“Ek plate se dil nahi, pet bharta hai.” ❤️</h2><p>Fresh • Desi • Chatpata</p></div></div>
 </div></section>
 
 <section class="contact" id="contact"><div class="container">
@@ -79,6 +79,7 @@ footer{background:#110a06;color:#d9c9bb;text-align:center;padding:30px 0;font-si
 <div class="carthead"><div class="container cartheadin"><strong>ANKIT'S PURI & CHAAT</strong><button class="back" onclick="closeCart()">← Back to Menu</button></div></div>
 <div class="container cartwrap"><div class="cartlayout"><div class="cartlist" id="cartList"></div><aside class="summary"><h2>Your Order</h2><div class="sumline"><span>Items</span><strong id="itemCount">0</strong></div><div class="sumline total"><span>Total</span><strong id="total">₹0</strong></div>
 <div class="form"><h3>Order Details</h3><input class="field" id="custName" placeholder="Your name"><input class="field" id="custNote" placeholder="Pickup note (optional)"><a class="btn primary checkout" id="checkout" target="_blank" rel="noopener">💬 SEND ORDER ON WHATSAPP</a><p style="font-size:12px;color:var(--muted);margin:12px 0 0">Your WhatsApp app will open with the order message ready to send.</p></div></aside></div></div>
+                                        <input class="field" id="custAddress" placeholder="Your address">
 </div>
 
 <script>
@@ -105,11 +106,33 @@ function updateCart(){
  buildWhatsApp();
 }
 function buildWhatsApp(){
- let names=Object.keys(cart),total=names.reduce((s,n)=>s+products[n].price*cart[n],0),name=document.getElementById("custName").value.trim(),note=document.getElementById("custNote").value.trim();
- let lines=names.map(n=>`${n} x ${cart[n]} = ₹${products[n].price*cart[n]}`).join("\n");
- let msg=`Hi ANKIT'S PURI & CHAAT!%0A%0AI'd like to place an order:%0A${encodeURIComponent(lines)}%0A%0ATotal: ₹${total}%0AName: ${encodeURIComponent(name||"Not provided")}${note?`%0ANote: ${encodeURIComponent(note)}`:""}`;
- document.getElementById("checkout").href="https://wa.me/"+WA+"?text="+msg;
-}
+  const name = document.getElementById("custName").value.trim();
+  const address = document.getElementById("custAddress").value.trim();
+  const note = document.getElementById("custNote").value.trim();
+
+  let lines = "";
+
+  cart.forEach(item => {
+    lines += `${item.name} × ${item.qty} — ₹${item.price * item.qty}\n`;
+  });
+
+  const total = cart.reduce((sum, item) => {
+    return sum + (item.price * item.qty);
+  }, 0);
+
+  const message =
+`🛒 NEW ORDER
+
+🍽️ Order:
+${lines}
+💰 Total: ₹${total}
+
+👤 Name: ${name || "Not provided"}
+📍 Address: ${address || "Not provided"}${note ? `\n📝 Note: ${note}` : ""}`;
+
+  document.getElementById("waBtn").href =
+    "https://wa.me/919272021683?text=" + encodeURIComponent(message);
+ }
 function openCart(){document.getElementById("cartPage").classList.add("open");document.body.style.overflow="hidden";updateCart()}
 function closeCart(){document.getElementById("cartPage").classList.remove("open");document.body.style.overflow="";window.scrollTo(0,0)}
 function toast(s){const t=document.getElementById("toast");t.textContent=s;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1500)}
