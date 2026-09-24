@@ -1,0 +1,821 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="theme-color" content="#111111">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ankit's Puri & Chaat">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#17100b">
+<meta name="description" content="ANKIT'S PURI & CHAAT — fresh pani puri and chaat. Order easily on WhatsApp.">
+<title>ANKIT'S PURI & CHAAT | Ek Puri Aur Ho Jaaye!</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<style>
+:root{--bg:#fffaf1;--paper:#fff;--ink:#1b110b;--muted:#715e4e;--red:#d94724;--gold:#e8aa32;--line:#eadfce;--dark:#17100b}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden}
+a{color:inherit}button{font:inherit}.container{width:min(1180px,92%);margin:auto}
+.nav{position:sticky;top:0;z-index:50;background:#fffaf1eF;backdrop-filter:blur(16px);border-bottom:1px solid #eadfce}
+.navin{height:72px;display:flex;align-items:center;justify-content:space-between}.brand{font-weight:950;letter-spacing:.5px;text-decoration:none}.brand small{display:block;color:var(--red);font-size:9px;letter-spacing:3px;margin-top:2px}
+.links{display:flex;gap:24px;align-items:center}.status-badge{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border-radius:999px;font-size:12px;font-weight:950;background:#fff;border:1px solid var(--line);box-shadow:0 6px 18px #5c38110d}.status-dot{width:9px;height:9px;border-radius:50%;display:inline-block;background:#999}.status-open{color:#187a3d}.status-open .status-dot{background:#22a45a}.status-closed{color:#a12b1d}.status-closed .status-dot{background:#d94724}.links a{text-decoration:none;font-size:14px;font-weight:800}.cartbtn{background:var(--dark);color:#fff;border:0;padding:11px 16px;border-radius:999px;cursor:pointer;font-weight:900}
+.hero{min-height:calc(100vh - 72px);display:grid;grid-template-columns:1fr 1fr;gap:55px;align-items:center;padding:72px 0 85px;position:relative;background:radial-gradient(circle at 88% 14%,#ffd86c 0 10%,transparent 10.5%),linear-gradient(135deg,#fffaf1,#ffe7ad)}
+.hero:before{content:"";position:absolute;inset:auto -100px 20px auto;width:260px;height:260px;border:35px solid #ffffff77;border-radius:50%;animation:spin 20s linear infinite}
+.kicker{display:inline-flex;background:var(--dark);color:#fff;padding:8px 13px;border-radius:99px;font-size:11px;font-weight:900;letter-spacing:1.5px}
+h1{font-size:clamp(3.3rem,7vw,6.8rem);line-height:.86;letter-spacing:-5px;margin:22px 0 20px}h1 span{color:var(--red)}.lead{font-size:18px;line-height:1.65;color:var(--muted);max-width:590px}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:13px;padding:14px 20px;font-weight:950;border:2px solid var(--ink);transition:.25s}.btn:hover{transform:translateY(-3px)}.primary{background:var(--red);border-color:var(--red);color:#fff}.ghost{background:transparent}
+.hero-card{background:#fff;padding:13px;border-radius:30px;box-shadow:0 30px 90px #6c3b181f;animation:float 4s ease-in-out infinite}.hero-card img{width:100%;height:520px;object-fit:cover;border-radius:22px;display:block}
+.trust{background:var(--dark);color:#fff}.trustin{display:grid;grid-template-columns:repeat(3,1fr);padding:24px 0;gap:20px;text-align:center}.trust b{display:block}.trust span{color:#d8c8b9;font-size:12px}
+section{padding:88px 0}.head{text-align:center;margin-bottom:42px}.head h2{font-size:clamp(2.2rem,4vw,3.3rem);letter-spacing:-2px;margin:0 0 8px}.head p{color:var(--muted);margin:0}
+.menu{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.item{background:#fff;border:1px solid var(--line);border-radius:23px;padding:13px;box-shadow:0 14px 40px #5c38110d;transition:.3s;overflow:hidden}.item:hover{transform:translateY(-7px);box-shadow:0 22px 55px #5c38111c}.foodpic{height:225px;border-radius:17px;overflow:hidden;background:#f4dfba}.foodpic img{width:100%;height:100%;object-fit:cover;display:block;transition:.5s}.item:hover .foodpic img{transform:scale(1.05)}.item h3{margin:16px 5px 4px;font-size:20px}.item p{margin:0 5px;color:var(--muted);font-size:13px;min-height:39px}.itemrow{display:flex;justify-content:space-between;align-items:center;margin:15px 5px 5px}.price{font-size:20px;font-weight:950;color:var(--red)}.add{border:0;background:var(--dark);color:#fff;border-radius:10px;padding:10px 14px;font-weight:900;cursor:pointer;transition:.2s}.add:hover{background:var(--red)}
+.story{display:grid;grid-template-columns:1fr 1fr;gap:35px;align-items:stretch}.storybox{background:var(--dark);color:#fff;border-radius:27px;padding:40px}.storybox p{color:#d9c8b8;line-height:1.7}.quote{background:linear-gradient(135deg,#f7c84c,#e85a2d);border-radius:27px;padding:40px;display:flex;align-items:center;min-height:300px}.quote h2{font-size:42px;line-height:1}
+.contact{background:#f4e5ce}.contactgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.contactcard{background:#fff;border:1px solid var(--line);border-radius:21px;padding:25px}.contactcard h3{margin:0 0 7px}.contactcard p{color:var(--muted);line-height:1.5}.social{background:#fff0e5}.socialbox{text-align:center}.socialbox a{display:inline-block;margin-top:18px}
+footer{background:#110a06;color:#d9c9bb;text-align:center;padding:30px 0;font-size:13px}
+.reveal{opacity:0;transform:translateY(25px);transition:.7s ease}.reveal.show{opacity:1;transform:none}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,120px);background:var(--dark);color:#fff;padding:13px 18px;border-radius:999px;z-index:100;font-weight:850;transition:.3s}.toast.show{transform:translate(-50%,0)}
+.cartpage{position:fixed;inset:0;background:var(--bg);z-index:80;overflow:auto;transform:translateX(100%);transition:.45s cubic-bezier(.2,.8,.2,1)}.cartpage.open{transform:translateX(0)}.carthead{position:sticky;top:0;background:#fffaf1ee;backdrop-filter:blur(14px);border-bottom:1px solid var(--line);z-index:2}.cartheadin{height:72px;display:flex;justify-content:space-between;align-items:center}.back{border:2px solid var(--ink);background:transparent;padding:10px 15px;border-radius:11px;font-weight:900;cursor:pointer}.cartwrap{padding:45px 0 80px}.cartlayout{display:grid;grid-template-columns:1.35fr .65fr;gap:22px}.cartlist,.summary{background:#fff;border:1px solid var(--line);border-radius:23px;padding:22px}.cartrow{display:grid;grid-template-columns:75px 1fr auto auto;gap:15px;align-items:center;padding:15px 0;border-bottom:1px solid #eee4d7}.thumb{width:75px;height:65px;border-radius:12px;overflow:hidden}.thumb img{width:100%;height:100%;object-fit:cover}.cartrow h3{margin:0 0 3px;font-size:16px}.cartrow p{margin:0;color:var(--muted);font-size:12px}.qty{display:flex;gap:7px;align-items:center}.qty button,.remove{border:1px solid #d9cabb;background:#fff;border-radius:8px;padding:6px 9px;font-weight:900;cursor:pointer}.remove{color:var(--red);margin-top:6px}.sumline{display:flex;justify-content:space-between;color:var(--muted);margin:13px 0}.total{border-top:1px solid var(--line);padding-top:16px;color:var(--ink);font-size:20px;font-weight:950}.checkout{width:100%;border:0;cursor:pointer;margin-top:18px}.form{margin-top:24px;border-top:1px solid var(--line);padding-top:20px}.field{width:100%;padding:13px;border:1px solid #dacdbd;border-radius:11px;margin:7px 0 10px;background:#fff}.empty{text-align:center;padding:60px 15px;color:var(--muted)}
+.adminpage{position:fixed;inset:0;background:var(--bg);z-index:120;overflow:auto;display:none}.adminpage.open{display:block}.adminbox{width:min(560px,92%);margin:80px auto;background:#fff;border:1px solid var(--line);border-radius:25px;padding:28px;box-shadow:0 25px 80px #5c38111c}.adminbox h2{margin-top:0}.admin-actions{display:grid;gap:10px;margin-top:18px}.admin-note{font-size:12px;color:var(--muted);line-height:1.5}.admin-editor-row{background:#fffaf1;border:1px solid var(--line);border-radius:16px;padding:12px;margin:10px 0}.admin-editor-grid{display:grid;grid-template-columns:1.3fr .7fr 1fr 1.2fr;gap:8px;align-items:center}.admin-editor-grid .field{margin:0}.checkline{font-size:12px;font-weight:800;display:flex;gap:7px;align-items:center}.checkline input{width:17px;height:17px}@media(max-width:700px){.admin-editor-grid{grid-template-columns:1fr 1fr}.admin-editor-grid .ap-name,.admin-editor-grid .ap-img,.admin-editor-grid .ao-title,.admin-editor-grid .ao-desc{grid-column:span 2}}.admin-status{padding:14px;border-radius:13px;background:#fffaf1;border:1px solid var(--line);margin:15px 0;font-weight:900}.adminlink{display:inline-block;margin-top:10px;font-size:11px;color:#8f7b69;text-decoration:none;opacity:.65}@keyframes float{0%,100%{transform:rotate(2deg) translateY(0)}50%{transform:rotate(1deg) translateY(-10px)}}@keyframes spin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+@media(max-width:850px){.hero{grid-template-columns:1fr;padding:55px 0}.hero-card img{height:380px}.menu{grid-template-columns:1fr 1fr}.story,.cartlayout{grid-template-columns:1fr}.contactgrid{grid-template-columns:1fr}.links a:not(.cartbtn){display:none}.trustin{grid-template-columns:1fr}}
+@media(max-width:560px){.menu{grid-template-columns:1fr}.cartrow{grid-template-columns:60px 1fr auto}.cartrow .lineprice{grid-column:2}.cartrow .remove{grid-column:3;grid-row:1}.cartrow .qty{grid-column:3;grid-row:1}.hero-card img{height:320px}h1{letter-spacing:-3px}}
+
+.account-wrap{position:relative}
+.account-chip{background:#fff;border:1px solid var(--line);padding:10px 14px;border-radius:999px;cursor:pointer;font-weight:900}
+.account-menu{position:absolute;right:0;top:calc(100% + 10px);width:210px;background:#fff;border:1px solid var(--line);border-radius:15px;padding:10px;box-shadow:0 18px 50px #5c38112b;display:none;z-index:70}
+.account-menu.open{display:block}
+.account-menu #accountText{font-size:12px;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--line);margin-bottom:6px}
+.account-menu button{width:100%;border:0;background:transparent;text-align:left;padding:10px;border-radius:9px;font-weight:800;cursor:pointer}
+.account-menu button:hover{background:#fff5e6}
+.authpage{position:fixed;inset:0;background:#17100bcc;backdrop-filter:blur(8px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;overflow:auto}
+.authpage.open{display:flex}.auth-booting .authpage{display:none!important}.auth-booting{overflow:hidden!important}
+.authbox{width:min(480px,100%);background:#fffaf1;border:1px solid var(--line);border-radius:25px;padding:28px;box-shadow:0 30px 90px #0006;position:relative}
+.authbox h2{margin:20px 0 5px;font-size:30px}
+.authsub{color:var(--muted);line-height:1.5;margin:0 0 20px}
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:18px 0}
+.auth-tabs button{border:1px solid var(--line);background:#fff;border-radius:11px;padding:12px;font-weight:900;cursor:pointer}
+.auth-tabs button.active{background:var(--dark);color:#fff;border-color:var(--dark)}
+.auth-msg{min-height:22px;margin-top:12px;color:var(--red);font-size:13px;font-weight:800}
+/* PHONE OTP LOGIN GATE */
+body.auth-locked{overflow:hidden}
+.otpbox{width:min(500px,100%);background:#fffaf1;border:1px solid var(--line);border-radius:28px;padding:30px;box-shadow:0 30px 100px #0008;position:relative}
+.otpbrand{font-weight:950;letter-spacing:.5px;font-size:15px}.otpbrand span{display:block;color:var(--red);font-size:10px;letter-spacing:3px;margin-top:3px}
+.otp-icon{font-size:48px;margin:20px 0 6px}.otpbox h2{font-size:32px;line-height:1.05;margin:8px 0}.otp-sub{color:var(--muted);line-height:1.55;margin:0 0 20px}.otp-step{display:none}.otp-step.active{display:block}.otp-phone{font-size:20px;letter-spacing:.4px}.otp-actions{display:flex;gap:9px;margin-top:10px}.otp-actions .btn{flex:1}.otp-note{font-size:12px;color:var(--muted);line-height:1.5;margin-top:15px}.otp-msg{min-height:24px;margin-top:12px;color:var(--red);font-size:13px;font-weight:900}.otp-success{color:#237a3d}.recaptcha-wrap{min-height:0;margin:10px 0}.otp-secure{display:flex;gap:9px;align-items:center;margin-top:17px;padding:12px;border:1px dashed #d9cabb;border-radius:14px;color:var(--muted);font-size:12px;line-height:1.4}
+@media(max-width:560px){.otpbox{padding:23px;border-radius:24px}.otpbox h2{font-size:29px}.otp-phone{font-size:18px}}
+
+@media(max-width:560px){
+  .links{gap:8px}
+  .account-chip{padding:9px 10px;font-size:12px}
+  .authbox{padding:22px}
+}
+
+
+.adminpage{position:fixed;inset:0;background:var(--bg);z-index:95;overflow:auto;transform:translateX(100%);transition:.45s cubic-bezier(.2,.8,.2,1)}
+.adminpage.open{transform:translateX(0)}
+.adminbox{width:min(1100px,94%);margin:30px auto 70px;background:#fff;border:1px solid var(--line);border-radius:26px;padding:24px;box-shadow:0 25px 80px #3b1d0d18}
+.admin-top{display:flex;justify-content:space-between;gap:15px;align-items:center;flex-wrap:wrap}.admin-top h2{margin:0}.admin-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}.admin-stat{padding:18px;border:1px solid var(--line);border-radius:17px;background:#fffaf1}.admin-stat b{font-size:28px;display:block}.admin-stat span{font-size:12px;color:var(--muted)}
+.admin-actions{display:flex;gap:10px;flex-wrap:wrap}.admin-orders{margin-top:20px}.order-card{border:1px solid var(--line);border-radius:17px;padding:17px;margin:12px 0;background:#fff}.order-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.order-items{margin:12px 0;padding:12px;background:#fffaf1;border-radius:12px;font-size:14px;line-height:1.7}.order-meta{color:var(--muted);font-size:12px;line-height:1.6}.status-select{padding:9px 11px;border:1px solid #d9cabb;border-radius:9px;background:#fff;font-weight:800}.admin-error{padding:13px;border-radius:12px;background:#fff0ee;color:#9f2516;margin:12px 0}.admin-ok{padding:13px;border-radius:12px;background:#edf9ef;color:#216b2c;margin:12px 0}.admin-help{padding:15px;border:1px dashed #d9cabb;border-radius:15px;background:#fffaf1;color:var(--muted);line-height:1.6}.uidbox{word-break:break-all;font-family:monospace;font-size:12px;background:#17100b;color:#fff;padding:10px;border-radius:9px;margin-top:8px}
+@media(max-width:850px){.admin-grid{grid-template-columns:1fr 1fr}}@media(max-width:560px){.adminbox{padding:16px;margin:12px auto 40px}.admin-grid{grid-template-columns:1fr 1fr}.admin-stat b{font-size:23px}}
+
+.customer-order-card{border:1px solid var(--line);border-radius:17px;padding:16px;margin:12px 0;background:#fff}.customer-order-head{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.customer-order-items{margin:10px 0;padding:11px;background:#fffaf1;border-radius:11px;font-size:13px;line-height:1.7}.order-badge{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:#fff5e6;border:1px solid var(--line);font-size:11px;font-weight:950;text-transform:uppercase}.profile-tabs-note{font-size:12px;color:var(--muted)}
+@media(max-width:560px){.authbox .admin-grid{grid-template-columns:1fr 1fr 1fr!important;gap:7px}.authbox .admin-stat{padding:12px 8px}.authbox .admin-stat b{font-size:20px}.customer-order-head{align-items:flex-start}}
+
+.quick-actions{padding:34px 0 8px}.quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.quick-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;cursor:pointer;transition:.25s;box-shadow:0 10px 30px #5c38110b;text-align:left}.quick-card:hover{transform:translateY(-5px);box-shadow:0 18px 45px #5c38111a}.quick-icon{font-size:28px;margin-bottom:8px}.quick-card strong{display:block;font-size:15px}.quick-card span{display:block;color:var(--muted);font-size:12px;margin-top:5px;line-height:1.45}.special-strip{margin:35px 0 10px;background:linear-gradient(135deg,#24130b,#4a2314);color:#fff;border-radius:28px;padding:28px;display:flex;justify-content:space-between;align-items:center;gap:20px;overflow:hidden;position:relative}.special-strip h2{margin:0 0 6px}.special-strip p{margin:0;color:#d9c8b8}.combo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:18px}.combo{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px}.combo h3{margin:0 0 7px}.combo p{font-size:13px;color:var(--muted);min-height:38px}.combo-price{font-size:19px;font-weight:950;color:var(--red);margin:12px 0}.chiprow{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.notechip{border:1px solid var(--line);background:#fffaf1;border-radius:999px;padding:8px 11px;font-weight:800;font-size:11px;cursor:pointer}.item{position:relative}.quickdock{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:90;background:#21140f;color:#fff;border:1px solid #ffffff22;border-radius:999px;padding:8px;display:flex;gap:5px;box-shadow:0 16px 45px #0003;backdrop-filter:blur(10px)}.quickdock button{border:0;background:transparent;color:#fff;border-radius:999px;padding:9px 12px;font-weight:900;font-size:11px;cursor:pointer}.quickdock button:hover{background:#ffffff18}.hubpage{position:fixed;inset:0;background:#fffaf1;z-index:150;overflow:auto;display:none}.hubpage.open{display:block}.hubbox{width:min(850px,92%);margin:55px auto 90px}.hubhero{background:linear-gradient(135deg,#24130b,#5b2816);color:#fff;border-radius:28px;padding:30px}.hubhero p{color:#d9c8b8}.hubclose{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}statusline{display:flex;gap:8px;align-items:center;flex-wrap:wrap} .menu-tools{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.menu-search{flex:1;min-width:210px;padding:13px 15px;border:1px solid var(--line);border-radius:13px;background:#fff}.filter-btn{border:1px solid var(--line);background:#fffaf1;border-radius:13px;padding:10px 13px;font-weight:900;cursor:pointer}.filter-btn.active{background:var(--dark);color:#fff}.clear-cart{border:1px solid #e7b6aa;background:#fff6f3;color:#a62c1c;border-radius:10px;padding:8px 11px;font-weight:900;cursor:pointer}.recent-strip{margin:18px 0;background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;display:flex;justify-content:space-between;align-items:center;gap:12px}.recent-strip .mini-items{font-size:12px;color:var(--muted)}@media(max-width:700px){.recent-strip{align-items:flex-start;flex-direction:column}.menu-tools{position:sticky;top:72px;z-index:20;background:var(--bg);padding:8px 0}}.pulse-dot{width:9px;height:9px;border-radius:50%;background:#2ca24d;box-shadow:0 0 0 5px #2ca24d22;display:inline-block}.hub-empty{text-align:center;padding:35px;color:var(--muted)}
+@media(max-width:850px){.quick-grid{grid-template-columns:1fr 1fr}.combo-grid{grid-template-columns:1fr}.special-strip{align-items:flex-start;flex-direction:column}.favorite-list{grid-template-columns:1fr}.quickdock{width:calc(100% - 20px);justify-content:space-around}.quickdock button{padding:9px 7px;font-size:10px}}
+
+
+/* 5% visual refresh + advanced admin */
+:root{--accent:#e5482b;--accent2:#f7c84c}
+.hero{border-bottom:1px solid #ead9c7}
+.hero-card{box-shadow:0 24px 65px #4b250d18}
+.brand small{letter-spacing:4px}
+.site-announcement{display:none;background:#24130b;color:#fff;padding:10px 14px;text-align:center;font-size:12px;font-weight:900;letter-spacing:.2px}
+.site-announcement.show{display:block}
+.admin-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.admin-tab{border:1px solid var(--line);background:#fffaf1;border-radius:12px;padding:10px 13px;font-weight:900;cursor:pointer}
+.admin-tab.active{background:var(--dark);color:#fff}
+.admin-section{display:none}.admin-section.active{display:block}
+.admin-control-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.admin-control{background:#fffaf1;border:1px solid var(--line);border-radius:16px;padding:13px}
+.admin-control label{display:block;font-size:11px;font-weight:950;margin-bottom:6px;color:var(--muted)}
+.admin-control .field{margin:0}
+.admin-wide{grid-column:1/-1}
+.admin-toggle-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}
+.admin-toggle{display:flex;align-items:center;gap:9px;padding:12px;background:#fff;border:1px solid var(--line);border-radius:13px;font-size:12px;font-weight:900}
+.admin-toggle input{width:18px;height:18px}
+.admin-publish{position:sticky;bottom:10px;z-index:5;padding-top:12px;background:linear-gradient(transparent,#fff 35%)}
+.customer-admin-card{background:#fffaf1;border:1px solid var(--line);border-radius:15px;padding:13px;margin:9px 0}
+.customer-admin-card strong{font-size:14px}.customer-admin-card small{display:block;color:var(--muted);line-height:1.5;margin-top:4px}
+@media(max-width:700px){.admin-control-grid{grid-template-columns:1fr}.admin-wide{grid-column:auto}.admin-toggle-row{grid-template-columns:1fr}}
+
+</style>
+</head>
+<body class="auth-booting auth-locked">
+<nav class="nav"><div class="container navin">
+<a class="brand" href="#top">ANKIT'S <small>PURI & CHAAT</small></a>
+<div class="links"><a href="#menu">Menu</a><a href="#story">Our Story</a><a href="#contact">Visit</a>
+<div class="account-wrap">
+<button class="account-chip" id="accountBtn" onclick="toggleAccountMenu()">👤 Login / Register</button>
+<div class="account-menu" id="accountMenu">
+<div id="accountText">Not logged in</div>
+<button id="profileBtn" onclick="openProfile()" style="display:none">👤 My Profile</button>
+<button id="ordersBtn" onclick="openProfile('orders')" style="display:none">🧾 My Orders</button>
+<button id="loginBtn" onclick="openAuth('login')">Login / Register</button>
+<button id="logoutBtn" onclick="customerLogout()" style="display:none">Logout</button>
+</div></div>
+<button class="cartbtn" onclick="openCart()">🛒 Order <span id="count">0</span></button></div>
+</div></nav>
+
+<div class="site-announcement" id="siteAnnouncement"></div>
+<main id="top">
+<header class="hero"><div class="container" style="display:contents">
+<div class="reveal"><span class="kicker" id="heroKicker">FRESH • CHATPATA • LOCAL FAVOURITE</span><div id="shopStatus" class="status-badge" style="margin-top:14px"><span class="status-dot"></span><span>Checking shop status…</span></div><h1 id="heroTitle">EK PURI<br><span>AUR HO JAAYE!</span></h1><p class="lead" id="heroLead">Fresh pani puri and irresistible chaat, served with the familiar taste of ANKIT'S PURI & CHAAT.</p><div class="actions"><a class="btn primary" href="#menu">ORDER NOW →</a><a class="btn ghost" href="https://maps.app.goo.gl/nqnM21tLumqJd9XDA?g_st=aw" target="_blank" rel="noopener">📍 FIND US</a></div></div>
+<div class="hero-card reveal"><img src="pani-puri.jpeg" alt="Pani puri at Ankit's Puri & Chaat"></div>
+</div></header>
+
+<div class="trust"><div class="container trustin"><div><b>✨ Fresh Ingredients</b><span>Made fresh for every order</span></div><div><b>🌶️ Chatpata Flavour</b><span>That desi taste you remember</span></div><div><b>❤️ Loved Locally</b><span>Now with an easy online order</span></div></div></div>
+
+<section class="quick-actions" id="quickActions"><div class="container">
+<div class="quick-grid">
+<button class="quick-card" onclick="openHub('picks')"><div class="quick-icon">⭐</div><strong>Smart Picks</strong><span>Quickly choose a few ready picks and add them to your order.</span></button>
+<button class="quick-card" onclick="openTiming()"><div class="quick-icon">⏰</div><strong>Order Timing</strong><span>ASAP ya 15/30/45 minutes ka preference set karo.</span></button>
+<button class="quick-card" onclick="openProfile('orders')"><div class="quick-icon">📦</div><strong>Track My Order</strong><span>See your latest order and current status.</span></button>
+<button class="quick-card quick-offers" onclick="openHub('offers')"><div class="quick-icon">🎁</div><strong>Offers & Specials</strong><span>See today's special ideas and quick deals.</span></button>
+</div>
+</div></section>
+
+<section id="menu"><div class="container">
+<div class="head reveal"><h2>Order Your Chaat</h2><p>Apna chaat choose karo, customize karo, cart review karo aur WhatsApp par order bhejo.</p></div>
+<div class="menu-tools"><input id="menuSearch" class="menu-search" placeholder="🔎 Search pani puri, dahi puri..." oninput="filterMenu()"><button class="filter-btn active" data-filter="all" onclick="setMenuFilter('all',this)">ALL</button><button class="filter-btn" data-filter="available" onclick="setMenuFilter('available',this)">AVAILABLE</button><button class="filter-btn" data-filter="new" onclick="setMenuFilter('new',this)">NEW</button></div>
+<div id="recentStrip" class="recent-strip" style="display:none"></div>
+<div class="menu" id="menuGrid"></div></div></section>
+
+<section class="container" id="comboStrip"><div class="special-strip reveal"><div><h2>🌟 Make it a Chatpata Combo</h2><p>Mix your favourites and build your order faster.</p></div><button class="btn primary" onclick="openHub('combos')">BUILD MY COMBO →</button></div></section>
+
+<section id="story"><div class="container story">
+<div class="storybox reveal"><h2 id="storyTitle">From Ankit Chat Center to ANKIT'S PURI & CHAAT.</h2><p id="storyText">Your local favourite, presented as a modern food brand. This space can later tell your real story and what makes your taste special.</p><p><strong id="storyHours">Open daily: 3 PM – 9 PM</strong></p></div>
+<div class="quote reveal"><div><h2 id="quoteTitle">“Ek plate se pet nahi, dil bharta hai.” ❤️</h2><p id="quoteText">Fresh • Desi • Chatpata</p></div></div>
+</div></section>
+
+<section class="contact" id="contact"><div class="container">
+<div class="head reveal"><h2>Come Say Hi 👋</h2><p id="contactHours">We're open every day from 3 PM to 9 PM.</p></div>
+<div class="contactgrid">
+<div class="contactcard reveal"><h3>📍 Find Us</h3><p>Tap below to open the exact shop location in Google Maps.</p><a class="btn ghost" href="https://maps.app.goo.gl/nqnM21tLumqJd9XDA?g_st=aw" target="_blank" rel="noopener">OPEN MAPS</a></div>
+<div class="contactcard reveal"><h3>💬 WhatsApp Orders</h3><p>Order directly on WhatsApp: <strong id="contactPhone">9272021683</strong></p><a class="btn primary" href="https://wa.me/919272021683" target="_blank" rel="noopener">CHAT ON WHATSAPP</a></div>
+<div class="contactcard reveal"><h3>📸 Instagram</h3><p>Follow ANKIT'S PURI & CHAAT for updates and food posts.</p><a class="btn ghost" href="https://www.instagram.com/ankitspuri.chaat?stkn=M2N6d25pcTMwZGww" target="_blank" rel="noopener">OPEN INSTAGRAM</a></div>
+</div></div></section>
+</main>
+
+<footer><div class="container" id="footerText">© 2026 ANKIT'S PURI & CHAAT • Ek Puri Aur Ho Jaaye!<br><a class="adminlink" href="#admin" onclick="openAdmin();return false">Admin</a></div></footer>
+<div class="hubpage" id="hubPage"><div class="hubbox"><div class="hubclose"><button class="back" onclick="closeHub()">← Close</button><strong>ANKIT'S PURI & CHAAT</strong></div><div class="hubhero"><div class="statusline"><span class="pulse-dot"></span><b>CHATPATA QUICK HUB</b></div><h1 style="font-size:clamp(2.4rem,6vw,4.8rem);letter-spacing:-3px;margin:14px 0 10px">Kuch tasty sa<br><span style="color:#f7c84c">choose karo!</span></h1><p>Smart picks, customization, combos and offers — sab ek jagah.</p></div><div class="feature-section" style="margin-top:18px"><div class="feature-row"><button class="feature-btn dark" onclick="openHub('picks')">⭐ SMART PICKS</button><button class="feature-btn light" onclick="openCustomizerFromHub()">🌶️ CUSTOMIZE</button><button class="feature-btn light" onclick="openSavedAddresses()">📍 ADDRESSES</button><button class="feature-btn light" onclick="openTiming()">⏰ TIMING</button><button class="feature-btn light" onclick="openShareMenu()">📤 SHARE MENU</button><button class="feature-btn light" onclick="openOrderHistory()">📦 HISTORY</button></div></div><div id="hubContent"></div></div></div>
+
+<div class="quickdock"><button onclick="openHub('picks')">⭐ PICKS</button><button onclick="openHub('combos')">🔥 COMBO</button><button onclick="openHub('offers')">🎁 OFFERS</button><button onclick="openProfile('orders')">📦 ORDERS</button><button onclick="openCart()">🛒 CART <span id="dockCount">0</span></button></div>
+
+<div class="toast" id="toast"></div>
+
+
+<div class="authpage" id="authPage">
+  <div class="otpbox">
+    <div class="otpbrand">ANKIT'S <span>PURI & CHAAT</span></div>
+    <div class="otp-icon">👤</div>
+    <h2>Welcome! 👋</h2>
+    <p class="otp-sub">Website use karne ke liye pehle apna customer account login karo. Login ke baad tumhara profile, cart aur orders account ke saath save rahenge.</p>
+    <div class="otp-actions" style="margin-bottom:14px">
+      <button class="btn primary" id="loginModeBtn" onclick="switchAuthMode('login')">LOGIN</button>
+      <button class="btn ghost" id="registerModeBtn" onclick="switchAuthMode('register')">REGISTER</button>
+    </div>
+    <div id="emailAuthForm">
+      <input class="field" id="loginName" type="text" autocomplete="name" placeholder="Your name (new account ke liye)" style="display:none">
+      <input class="field" id="authEmail" type="email" autocomplete="email" placeholder="Email address">
+      <input class="field" id="authPassword" type="password" autocomplete="current-password" placeholder="Password (minimum 6 characters)">
+      <button class="btn primary" id="authSubmitBtn" style="width:100%;margin-top:3px" onclick="submitAuth()">LOGIN & ENTER WEBSITE →</button>
+      <div class="otp-msg" id="authMsg"></div>
+    </div>
+    <div class="otp-secure">🔒 <span>Customer account Firebase Authentication se secure rahega. Same email/password se dobara login karoge to tumhara saved data restore ho jayega.</span></div>
+  </div>
+</div>
+
+<div class="authpage" id="profilePage">
+  <div class="authbox" style="width:min(720px,100%)">
+    <button class="back" onclick="closeProfile()">← Close</button>
+    <h2>👤 My Account</h2>
+    <p class="authsub">Your profile, saved address, cart and order history stay connected to your Firebase account.</p>
+    <div class="admin-grid" style="grid-template-columns:repeat(3,1fr);margin:16px 0">
+      <div class="admin-stat"><b id="profileOrderCount">0</b><span>Total orders</span></div>
+      <div class="admin-stat"><b id="profileSpent">₹0</b><span>Total spent</span></div>
+      <div class="admin-stat"><b id="profilePoints">0</b><span>Reward points</span></div>
+    </div>
+    <div class="auth-tabs">
+      <button id="profileTab" class="active" onclick="showProfileTab('profile')">Profile</button>
+      <button id="ordersTab" onclick="showProfileTab('orders')">My Orders</button>
+    </div>
+    <div id="profilePanel">
+      <input class="field" id="profileName" placeholder="Your name">
+      <input class="field" id="profilePhone" placeholder="Mobile number" inputmode="tel">
+      <input class="field" id="profileEmail" placeholder="Email address" disabled>
+      <textarea class="field" id="profileAddress" placeholder="Saved delivery / pickup address" rows="3"></textarea>
+      <button class="btn primary" style="width:100%" onclick="saveCustomerProfile()">💾 SAVE MY DETAILS</button>
+      <div class="auth-msg" id="profileMsg"></div>
+      <div class="admin-help" style="margin-top:12px"><strong>🛒 Smart cart</strong><br>Your cart is saved to your account after login, so it can come back when you use the same account again.</div>
+    </div>
+    <div id="ordersPanel" style="display:none">
+      <div id="customerOrdersList"><p class="admin-note">Loading your orders…</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="cartpage" id="cartPage">
+<div class="carthead"><div class="container cartheadin"><strong>ANKIT'S PURI & CHAAT</strong><button class="back" onclick="closeCart()">← Back to Menu</button></div></div>
+<div class="container cartwrap"><div class="cartlayout"><div class="cartlist" id="cartList"></div><aside class="summary"><h2>Your Order</h2><div class="sumline"><span>Items</span><strong id="itemCount">0</strong></div><div class="sumline total"><span>Total</span><strong id="total">₹0</strong></div>
+<div class="form"><h3>Order Details</h3><input class="field" id="custName" placeholder="Your name"><textarea class="field" id="custAddress" placeholder="Your full address" rows="3"></textarea><input class="field" id="custNote" placeholder="Pickup note (optional)"><div class="chiprow"><button class="notechip" onclick="addNoteChip('🌶️ Extra spicy')">🌶️ Extra spicy</button><button class="notechip" onclick="addNoteChip('🍯 More meetha')">🍯 More meetha</button><button class="notechip" onclick="addNoteChip('🥣 Extra pani')">🥣 Extra pani</button><button class="notechip" onclick="addNoteChip('🧅 No onion')">🧅 No onion</button></div><button class="clear-cart" type="button" onclick="clearCart()">🗑️ Clear Cart</button><button class="btn primary checkout" id="checkout" type="button" onclick="sendOrder()">💬 SEND ORDER ON WHATSAPP</button><p style="font-size:12px;color:var(--muted);margin:12px 0 0">Your WhatsApp app will open with the order message ready to send.</p></div></aside></div></div>
+</div>
+
+<div class="adminpage" id="adminPage">
+  <div class="adminbox">
+    <div class="admin-top">
+      <div><h2>⚙️ ANKIT'S CONTROL CENTER</h2><p class="admin-note">Website ka content, design, menu, offers, orders aur customer data — ek hi jagah se control karo.</p></div>
+      <button class="back" onclick="closeAdmin()">← Close</button>
+    </div>
+    <div id="adminMessage"></div>
+    <div id="adminGate">
+      <div class="admin-help"><strong>Owner access</strong><br>Customer account se login karo. Is account ka Firebase UID <b>admins/{UID}</b> me <b>enabled = true</b> hona chahiye.</div>
+      <button class="btn primary" style="margin-top:14px" onclick="openAuth('login')">👤 OWNER LOGIN</button>
+      <div id="adminUidHelp" style="display:none;margin-top:15px"><b>Your Firebase UID:</b><div class="uidbox" id="currentUid"></div><small>Firebase Console → Firestore → admins → document ID = UID → enabled = true.</small></div>
+    </div>
+    <div id="adminDashboard" style="display:none">
+      <div class="admin-grid">
+        <div class="admin-stat"><b id="statOrders">0</b><span>Total orders</span></div>
+        <div class="admin-stat"><b id="statPending">0</b><span>Pending / preparing</span></div>
+        <div class="admin-stat"><b id="statDone">0</b><span>Completed</span></div>
+        <div class="admin-stat"><b id="statSales">₹0</b><span>Total sales</span></div>
+      </div>
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="showAdminSection('overview',this)">📊 Overview</button>
+        <button class="admin-tab" onclick="showAdminSection('site',this)">🎨 Website</button>
+        <button class="admin-tab" onclick="showAdminSection('menuAdmin',this)">🍽️ Menu</button>
+        <button class="admin-tab" onclick="showAdminSection('offersAdmin',this)">🎁 Offers</button>
+        <button class="admin-tab" onclick="showAdminSection('ordersAdmin',this)">🛒 Orders</button>
+        <button class="admin-tab" onclick="showAdminSection('customersAdmin',this)">👥 Customers</button>
+      </div>
+
+      <section class="admin-section active" id="adminSection-overview">
+        <div class="admin-control-grid">
+          <div class="admin-control admin-wide"><label>SHOP STATUS</label><div class="admin-actions"><button class="btn primary" onclick="setShopMode('open')">🟢 OPEN</button><button class="btn ghost" onclick="setShopMode('closed')">🔴 CLOSED</button><button class="btn ghost" onclick="setShopMode('auto')">🕒 AUTO</button></div><div class="admin-status" id="adminStatus">Checking…</div></div>
+          <div class="admin-control"><label>ORDER ACCEPTANCE</label><select class="field" id="adminAcceptOrders"><option value="true">Accept orders</option><option value="false">Pause new orders</option></select></div>
+          <div class="admin-control"><label>REFRESH</label><button class="btn ghost" style="width:100%" onclick="refreshAdmin()">↻ Refresh dashboard</button></div>
+        </div>
+      </section>
+
+      <section class="admin-section" id="adminSection-site">
+        <div class="admin-top"><div><h3>🎨 Website Control</h3><p class="admin-note">Yahan se website ka text, links, colours, sections aur shop information change kar sakte ho.</p></div></div>
+        <div class="admin-control-grid">
+          <div class="admin-control"><label>HERO KICKER</label><input class="field" id="setKicker"></div>
+          <div class="admin-control"><label>HERO TITLE</label><input class="field" id="setHeroTitle"></div>
+          <div class="admin-control admin-wide"><label>HERO DESCRIPTION</label><textarea class="field" id="setHeroLead" rows="3"></textarea></div>
+          <div class="admin-control"><label>OPENING HOURS</label><input class="field" id="setHours"></div>
+          <div class="admin-control"><label>WHATSAPP NUMBER</label><input class="field" id="setWhatsApp"></div>
+          <div class="admin-control"><label>GOOGLE MAPS LINK</label><input class="field" id="setMaps"></div>
+          <div class="admin-control"><label>INSTAGRAM LINK</label><input class="field" id="setInstagram"></div>
+          <div class="admin-control"><label>ANNOUNCEMENT / TOP BANNER</label><input class="field" id="setAnnouncement" placeholder="e.g. Aaj special offer available! (blank = hide)"></div>
+          <div class="admin-control"><label>STORY TITLE</label><input class="field" id="setStoryTitle"></div>
+          <div class="admin-control admin-wide"><label>STORY TEXT</label><textarea class="field" id="setStoryText" rows="3"></textarea></div>
+          <div class="admin-control"><label>QUOTE</label><input class="field" id="setQuote"></div>
+          <div class="admin-control"><label>QUOTE SUBTEXT</label><input class="field" id="setQuoteText"></div>
+          <div class="admin-control"><label>PRIMARY COLOUR</label><input class="field" id="setPrimary" type="color" value="#e5482b"></div>
+          <div class="admin-control"><label>ACCENT COLOUR</label><input class="field" id="setAccent" type="color" value="#f7c84c"></div>
+          <div class="admin-control admin-wide"><label>VISIBLE SECTIONS</label><div class="admin-toggle-row"><label class="admin-toggle"><input type="checkbox" id="setShowQuick"> Quick features</label><label class="admin-toggle"><input type="checkbox" id="setShowCustomize"> Customize</label><label class="admin-toggle"><input type="checkbox" id="setShowCombo"> Combo section</label><label class="admin-toggle"><input type="checkbox" id="setShowOffers"> Offers</label></div></div>
+        </div>
+        <div class="admin-publish"><button class="btn primary" style="width:100%" onclick="saveSiteControl()">🚀 PUBLISH WEBSITE CHANGES</button></div>
+      </section>
+
+      <section class="admin-section" id="adminSection-menuAdmin">
+        <div class="admin-top"><div><h3>🍽️ Menu Manager</h3><p class="admin-note">Dish add/remove, price, serving, image, availability aur NEW badge change karo.</p></div><button class="btn ghost" onclick="renderAdminCatalogEditor()">↻ Reload</button></div>
+        <div id="adminCatalogEditor"></div>
+        <div class="admin-actions"><button class="btn ghost" onclick="addAdminProductRow()">＋ ADD NEW DISH</button><button class="btn primary" onclick="saveCatalogSettings()">💾 SAVE MENU</button></div>
+      </section>
+
+      <section class="admin-section" id="adminSection-offersAdmin">
+        <div class="admin-top"><div><h3>🎁 Offers Manager</h3><p class="admin-note">Apne offers/combos ko ON/OFF karo aur price/details badlo.</p></div></div>
+        <div id="adminOffersEditor"></div>
+        <div class="admin-actions"><button class="btn ghost" onclick="addAdminOfferRow()">＋ ADD OFFER</button><button class="btn primary" onclick="saveOfferSettings()">💾 SAVE OFFERS</button></div>
+      </section>
+
+      <section class="admin-section" id="adminSection-ordersAdmin">
+        <div class="admin-top"><div><h3>🛒 Order Manager</h3><p class="admin-note">Orders dekho aur status change karo.</p></div><button class="btn ghost" onclick="loadAdminOrders()">↻ Refresh</button></div>
+        <div id="ordersList"><p class="admin-note">Loading orders…</p></div>
+      </section>
+
+      <section class="admin-section" id="adminSection-customersAdmin">
+        <div class="admin-top"><div><h3>👥 Customer Center</h3><p class="admin-note">Registered customers ki basic profile information yahan dikhegi.</p></div><button class="btn ghost" onclick="loadAdminCustomers()">↻ Refresh</button></div>
+        <div id="customersList"><p class="admin-note">Loading customers…</p></div>
+      </section>
+
+      <div style="margin-top:22px"><button class="btn ghost" onclick="customerLogout();closeAdmin()">Logout</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+let WA="919272021683";
+let products={
+"Pani Puri":{price:20,serving:"6 pcs",img:"pani-puri.jpeg",available:true,isNew:false},
+"Dahi Puri":{price:30,serving:"6 pcs",img:"dahi-puri.jpeg",available:true,isNew:false},
+"Sev Puri":{price:20,serving:"6 pcs",img:"sev-puri.jpeg",available:true,isNew:false},
+"Bhel":{price:15,serving:"1 plate",img:"bhel.jpeg",available:true,isNew:false},
+"Aloo Chaat":{price:20,serving:"1 plate",img:"aloo-chaat.jpeg",available:true,isNew:false}
+};
+let siteOffers=[{title:"Chatpata Pick",description:"Pani Puri + Bhel",price:35,active:true},{title:"Chaat Lovers",description:"Dahi Puri + Sev Puri",price:50,active:true}];
+const defaultProducts=JSON.parse(JSON.stringify(products));
+let siteSettingsLoaded=false;
+let cart={};
+let cartSaveTimer=null;
+function localCartKey(){return auth&&auth.currentUser ? "ankits_puri_chaat_cart_"+auth.currentUser.uid : "ankits_puri_chaat_cart";}
+function readLocalCart(){try{return JSON.parse(localStorage.getItem(localCartKey())||"{}")}catch(e){return {}}}
+function writeLocalCart(){try{localStorage.setItem(localCartKey(),JSON.stringify(cart))}catch(e){}}
+function scheduleCartSave(){
+  writeLocalCart();
+  if(cartSaveTimer)clearTimeout(cartSaveTimer);
+  cartSaveTimer=setTimeout(async()=>{
+    if(auth&&auth.currentUser&&db){try{await db.collection("customers").doc(auth.currentUser.uid).set({cart:cart,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true})}catch(e){console.warn("Cart save",e)}}
+  },500);
+}
+function add(name){cart[name]=(cart[name]||0)+1;scheduleCartSave();updateCart();openCart();toast(name+" added to your order ✓")}
+function change(name,n){cart[name]=(cart[name]||0)+n;if(cart[name]<=0)delete cart[name];scheduleCartSave();updateCart()}
+function removeItem(name){delete cart[name];scheduleCartSave();updateCart();toast(name+" removed")}
+function updateCart(){
+ let names=Object.keys(cart), count=names.reduce((s,n)=>s+cart[n],0), total=names.reduce((s,n)=>s+products[n].price*cart[n],0);
+ document.getElementById("count").textContent=count;const dock=document.getElementById("dockCount");if(dock)dock.textContent=count;
+ document.getElementById("itemCount").textContent=count;
+ document.getElementById("total").textContent="₹"+total;
+ const list=document.getElementById("cartList");
+ if(!names.length){list.innerHTML='<div class="empty"><div style="font-size:4rem">🛒</div><h2>Your cart is empty</h2><p>Add something delicious from the menu.</p><button class="btn primary" onclick="closeCart()">Browse Menu</button></div>'}
+ else list.innerHTML='<h2 style="margin:0 0 8px">Your Items</h2>'+names.map(n=>`<div class="cartrow"><div class="thumb"><img src="${products[n].img}" alt=""></div><div><h3>${n}</h3><p>₹${products[n].price} each</p></div><div class="qty"><button onclick="change('${n}',-1)">−</button><strong>${cart[n]}</strong><button onclick="change('${n}',1)">+</button></div><div><strong>₹${products[n].price*cart[n]}</strong><br><button class="remove" onclick="removeItem('${n}')">Remove</button></div></div>`).join("");
+ buildWhatsApp();
+}
+let activeMenuFilter='all';
+function filterMenu(){
+  const q=(document.getElementById('menuSearch')?.value||'').trim().toLowerCase();
+  document.querySelectorAll('#menuGrid .menu-item').forEach(el=>{
+    const okText=!q || (el.dataset.name||'').includes(q);
+    const okFilter=activeMenuFilter==='all'||(activeMenuFilter==='available'&&el.dataset.available==='true')||(activeMenuFilter==='new'&&el.dataset.new==='true');
+    el.style.display=okText&&okFilter?'':'none';
+  });
+}
+function setMenuFilter(filter,btn){
+  activeMenuFilter=filter;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');filterMenu();
+}
+function clearCart(){
+  if(!Object.keys(cart).length){toast('Cart already empty');return;}
+  cart={};scheduleCartSave();updateCart();toast('Cart cleared ✓');
+}
+function renderRecentOrder(){
+  const el=document.getElementById('recentStrip');if(!el)return;
+  try{
+    const o=JSON.parse(localStorage.getItem('ankitLastOrder')||'null');
+    if(!o||!Array.isArray(o.items)||!o.items.length){el.style.display='none';return;}
+    el.style.display='flex';
+    const names=o.items.map(i=>`${i.name} × ${i.qty}`).join(' • ');
+    el.innerHTML=`<div><strong>🔁 Last order</strong><div class="mini-items">${escapeHtml(names)}${o.total?' • ₹'+Number(o.total):''}</div></div><button class="btn ghost" style="padding:9px 12px" onclick='reorderFromHistory(${JSON.stringify(o.items)})'>ORDER AGAIN</button>`;
+  }catch(e){el.style.display='none'}
+}
+function renderMenu(){
+ const grid=document.getElementById('menuGrid');if(!grid)return;
+ grid.innerHTML=Object.keys(products).map(n=>{const p=products[n]||{};const unavailable=p.available===false;return `<article class="item reveal menu-item" data-name="${escapeHtml(n.toLowerCase())}" data-available="${unavailable?'false':'true'}" data-new="${p.isNew?'true':'false'}" style="position:relative;opacity:${unavailable?.58:1}"><div class="foodpic"><img src="${escapeHtml(p.img||'pani-puri.jpeg')}" alt="${escapeHtml(n)}"></div><div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap"><h3 style="margin:0">${escapeHtml(n)}</h3>${p.isNew?'<span style="background:#f7c84c;color:#24130b;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:900">NEW</span>':''}</div><p>${escapeHtml(p.serving||'Freshly prepared')}</p><div class="itemrow"><span class="price">₹${Number(p.price||0)}</span>${unavailable?'<button class="add" disabled>NOT AVAILABLE</button>':`<button class="add" onclick='add(${JSON.stringify(n)})'>ADD +</button>`}</div></article>`}).join('');
+ document.querySelectorAll('#menuGrid .reveal').forEach(e=>e.classList.add('show'));filterMenu();
+}
+
+function renderAdminCatalogEditor(){const el=document.getElementById('adminCatalogEditor');if(!el)return;el.innerHTML=Object.keys(products).map(n=>{const p=products[n];return `<div class="admin-editor-row"><div class="admin-editor-grid"><input class="field ap-name" value="${escapeHtml(n)}" placeholder="Dish name"><input class="field ap-price" type="number" min="0" value="${Number(p.price||0)}" placeholder="Price"><input class="field ap-serving" value="${escapeHtml(p.serving||'')}" placeholder="Serving e.g. 6 pcs"><input class="field ap-img" value="${escapeHtml(p.img||'pani-puri.jpeg')}" placeholder="Image filename"><label class="checkline"><input class="ap-available" type="checkbox" ${p.available!==false?'checked':''}> Available today</label><label class="checkline"><input class="ap-new" type="checkbox" ${p.isNew?'checked':''}> NEW dish</label><button class="btn ghost" type="button" onclick="this.closest('.admin-editor-row').remove()">🗑️ Remove</button></div></div>`}).join('')||'<p class="admin-note">No dishes yet.</p>';}
+function addAdminProductRow(){const el=document.getElementById('adminCatalogEditor');if(!el)return;const d=document.createElement('div');d.className='admin-editor-row';d.innerHTML=`<div class="admin-editor-grid"><input class="field ap-name" placeholder="New dish name"><input class="field ap-price" type="number" min="0" value="20" placeholder="Price"><input class="field ap-serving" placeholder="Serving e.g. 1 plate"><input class="field ap-img" value="pani-puri.jpeg" placeholder="Image filename"><label class="checkline"><input class="ap-available" type="checkbox" checked> Available today</label><label class="checkline"><input class="ap-new" type="checkbox" checked> NEW dish</label><button class="btn ghost" type="button" onclick="this.closest('.admin-editor-row').remove()">🗑️ Remove</button></div>`;el.appendChild(d);d.querySelector('.ap-name').focus();}
+async function saveCatalogSettings(){if(!adminEnabled||!db)return;const next={};document.querySelectorAll('#adminCatalogEditor .admin-editor-row').forEach(r=>{const name=r.querySelector('.ap-name').value.trim();if(name)next[name]={price:Number(r.querySelector('.ap-price').value||0),serving:r.querySelector('.ap-serving').value.trim()||'Freshly prepared',img:r.querySelector('.ap-img').value.trim()||'pani-puri.jpeg',available:r.querySelector('.ap-available').checked,isNew:r.querySelector('.ap-new').checked};});if(!Object.keys(next).length){adminMessage('At least one dish rakho.','error');return;}try{await db.collection('settings').doc('site').set({products:next,offers:siteOffers,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:auth.currentUser.uid},{merge:true});products=next;renderMenu();renderAdminCatalogEditor();adminMessage('Menu changes saved ✓');}catch(e){adminMessage('Menu save failed: '+e.message,'error');}}
+function renderAdminOffersEditor(){const el=document.getElementById('adminOffersEditor');if(!el)return;el.innerHTML=siteOffers.map(o=>`<div class="admin-editor-row"><div class="admin-editor-grid"><input class="field ao-title" value="${escapeHtml(o.title||'')}" placeholder="Offer name"><input class="field ao-desc" value="${escapeHtml(o.description||'')}" placeholder="Offer details"><input class="field ao-price" type="number" min="0" value="${Number(o.price||0)}" placeholder="Offer price"><label class="checkline"><input class="ao-active" type="checkbox" ${o.active?'checked':''}> Offer ON</label><button class="btn ghost" type="button" onclick="this.closest('.admin-editor-row').remove()">🗑️ Remove</button></div></div>`).join('');}
+function addAdminOfferRow(){const el=document.getElementById('adminOffersEditor');if(!el)return;const d=document.createElement('div');d.className='admin-editor-row';d.innerHTML=`<div class="admin-editor-grid"><input class="field ao-title" placeholder="Offer name"><input class="field ao-desc" placeholder="Offer details"><input class="field ao-price" type="number" min="0" value="0" placeholder="Offer price"><label class="checkline"><input class="ao-active" type="checkbox" checked> Offer ON</label><button class="btn ghost" type="button" onclick="this.closest('.admin-editor-row').remove()">🗑️ Remove</button></div>`;el.appendChild(d);d.querySelector('.ao-title').focus();}
+async function saveOfferSettings(){if(!adminEnabled||!db)return;const next=[];document.querySelectorAll('#adminOffersEditor .admin-editor-row').forEach(r=>{const title=r.querySelector('.ao-title').value.trim();if(title)next.push({title,description:r.querySelector('.ao-desc').value.trim(),price:Number(r.querySelector('.ao-price').value||0),active:r.querySelector('.ao-active').checked});});try{await db.collection('settings').doc('site').set({offers:next,products:products,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:auth.currentUser.uid},{merge:true});siteOffers=next;renderAdminOffersEditor();adminMessage('Offers saved ✓');}catch(e){adminMessage('Offer save failed: '+e.message,'error');}}
+
+function buildWhatsApp(){
+  let names=Object.keys(cart),total=names.reduce((s,n)=>s+products[n].price*cart[n],0);
+  let name=document.getElementById("custName").value.trim();
+  let address=document.getElementById("custAddress").value.trim();
+  let note=document.getElementById("custNote").value.trim();
+  let lines=names.map(n=>`${n} × ${cart[n]} — ₹${products[n].price*cart[n]}`).join("\n");
+  let msg=`🛒 NEW ORDER\n\n🍽️ Order:\n${lines}\n\n💰 Total: ₹${total}\n\n👤 Name: ${name||"Not provided"}\n📍 Address: ${address||"Not provided"}${note?`\n📝 Note: ${note}`:""}`;
+  document.getElementById("checkout").href="https://wa.me/"+WA+"?text="+encodeURIComponent(msg);
+}
+async function saveOrderToFirebase(){
+ if(!db||!auth||!auth.currentUser)return null;
+ const names=Object.keys(cart);if(!names.length)return null;
+ const total=names.reduce((s,n)=>s+products[n].price*cart[n],0);
+ const name=document.getElementById("custName").value.trim();
+ const address=document.getElementById("custAddress").value.trim();
+ const note=document.getElementById("custNote").value.trim();
+ const items=names.map(n=>({name:n,qty:cart[n],unitPrice:products[n].price,lineTotal:products[n].price*cart[n]}));
+ const ref=await db.collection("orders").add({userId:auth.currentUser.uid,email:auth.currentUser.email||"",name,address,note,items,total,status:"pending",createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+ return ref.id;
+}
+function saveLastOrderSnapshot(){
+  try{
+    const items=Object.keys(cart).map(n=>({name:n,qty:cart[n],lineTotal:products[n].price*cart[n]}));
+    const total=items.reduce((a,i)=>a+i.lineTotal,0);
+    if(items.length)localStorage.setItem('ankitLastOrder',JSON.stringify({items,total,savedAt:Date.now()}));
+    renderRecentOrder();
+  }catch(e){}
+}
+async function sendOrder(){
+  saveLastOrderSnapshot();
+ const names=Object.keys(cart);if(!names.length){toast("Cart is empty");return;}
+ const user=auth&&auth.currentUser;
+ let savedId=null;
+ if(user){try{
+   savedId=await saveOrderToFirebase();
+   const name=document.getElementById("custName").value.trim(),address=document.getElementById("custAddress").value.trim();
+   await db.collection("customers").doc(user.uid).set({name:name,phone:(window.currentCustomerPhone||""),address:address,lastOrderAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+   cart={};scheduleCartSave();
+ }catch(e){console.warn(e);toast("Order could not be saved; opening WhatsApp anyway.");}}
+ const href=document.getElementById("checkout").href;
+ if(savedId)toast("Order saved ✓ Opening WhatsApp");
+ window.open(href,"_blank");
+ if(savedId){setTimeout(()=>{closeCart();},400);}
+}
+function openCart(){document.getElementById("cartPage").classList.add("open");document.body.style.overflow="hidden";prefillOrderDetails();updateCart()}
+async function prefillOrderDetails(){
+ const user=auth&&auth.currentUser;if(!user||!db)return;
+ try{const snap=await db.collection("customers").doc(user.uid).get();if(snap.exists){const d=snap.data();if(d.name&&!document.getElementById("custName").value)document.getElementById("custName").value=d.name;if(d.address&&!document.getElementById("custAddress").value)document.getElementById("custAddress").value=d.address;if(d.note&&!document.getElementById("custNote").value)document.getElementById("custNote").value=d.note;buildWhatsApp();}}catch(e){}
+}
+function closeCart(){document.getElementById("cartPage").classList.remove("open");document.body.style.overflow="";window.scrollTo(0,0)}
+function toast(s){const t=document.getElementById("toast");t.textContent=s;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1500)}
+document.getElementById("custName").addEventListener("input",buildWhatsApp);
+document.getElementById("custAddress").addEventListener("input",buildWhatsApp);
+document.getElementById("custNote").addEventListener("input",buildWhatsApp);
+const observer=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add("show")}),{threshold:.12});
+document.querySelectorAll(".reveal").forEach(e=>observer.observe(e));
+// Firebase-backed shop status + secure owner panel.
+const ADMIN_COLLECTION="admins";
+let adminEnabled=false;
+function getIndiaNow(){return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Kolkata"}));}
+function automaticOpen(){const d=getIndiaNow();const mins=d.getHours()*60+d.getMinutes();return mins>=15*60&&mins<21*60;}
+let shopMode=localStorage.getItem("ankitShopStatusMode")||"auto";
+function isShopOpen(){if(shopMode==="open")return true;if(shopMode==="closed")return false;return automaticOpen();}
+function renderShopStatus(){
+ const open=isShopOpen(),el=document.getElementById("shopStatus");
+ if(el){el.className="status-badge "+(open?"status-open":"status-closed");el.innerHTML='<span class="status-dot"></span><span>'+(open?"SHOP OPEN • Orders available":"SHOP CLOSED • Opens at 3 PM")+'</span>';}
+ const a=document.getElementById("adminStatus");if(a)a.textContent=open?"🟢 Shop is OPEN":"🔴 Shop is CLOSED";
+}
+async function loadShopMode(){
+ if(!db)return renderShopStatus();
+ try{const snap=await db.collection("settings").doc("shop").get();if(snap.exists&&snap.data().mode)shopMode=snap.data().mode;else shopMode="auto";}catch(e){}
+ renderShopStatus();
+}
+function openAdmin(){if(!(auth&&auth.currentUser)){openAuth('login');toast('Owner login required 🔒');return;}document.getElementById('adminPage').classList.add('open');document.body.style.overflow='hidden';refreshAdmin();}
+function closeAdmin(){document.getElementById("adminPage").classList.remove("open");document.body.style.overflow="";}
+function adminMessage(text,type="ok"){const el=document.getElementById("adminMessage");el.className=type==="error"?"admin-error":"admin-ok";el.textContent=text;}
+async function refreshAdmin(){
+ const gate=document.getElementById("adminGate"),dash=document.getElementById("adminDashboard");
+ gate.style.display="block";dash.style.display="none";document.getElementById("adminUidHelp").style.display="none";
+ if(!firebaseReady||!auth||!db){adminMessage("Firebase is not ready.","error");return;}
+ const user=auth.currentUser;
+ if(!user){adminMessage("Please login with your owner account first.","error");return;}
+ document.getElementById("currentUid").textContent=user.uid;document.getElementById("adminUidHelp").style.display="block";
+ try{
+   const snap=await db.collection(ADMIN_COLLECTION).doc(user.uid).get();
+   adminEnabled=snap.exists&&snap.data().enabled===true;
+   if(!adminEnabled){adminMessage("This account is not enabled as admin yet. Add the UID above to Firestore admins/{UID} with enabled=true.","error");return;}
+   gate.style.display="none";dash.style.display="block";adminMessage("Admin access verified ✓");await loadShopMode();await loadSiteSettings();renderAdminSiteEditor();renderAdminCatalogEditor();renderAdminOffersEditor();await loadAdminOrders();
+ }catch(e){adminMessage("Admin check failed: "+e.message,"error");}
+}
+async function setShopMode(mode){
+ if(!adminEnabled||!db)return;
+ try{await db.collection("settings").doc("shop").set({mode:mode,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:auth.currentUser.uid},{merge:true});shopMode=mode;renderShopStatus();adminMessage("Shop status updated ✓");}catch(e){adminMessage("Could not update shop status: "+e.message,"error");}
+}
+async function loadAdminOrders(){
+ if(!adminEnabled||!db)return;
+ const list=document.getElementById("ordersList");list.innerHTML="<p class='admin-note'>Loading orders…</p>";
+ try{
+   const snap=await db.collection("orders").orderBy("createdAt","desc").limit(100).get();
+   let total=0,pending=0,done=0;
+   if(snap.empty){list.innerHTML="<div class='admin-help'>No orders yet.</div>";updateStats(0,0,0,0);return;}
+   let html="";
+   snap.forEach(doc=>{const o=doc.data();const status=o.status||"pending";const amount=Number(o.total||0);total+=amount;if(status!=="completed"&&status!=="cancelled")pending++;if(status==="completed"){done++;}
+     const items=(o.items||[]).map(i=>`${i.name} × ${i.qty} — ₹${i.lineTotal}`).join("<br>");
+     const when=o.createdAt&&o.createdAt.toDate?o.createdAt.toDate().toLocaleString("en-IN"):"Just now";
+     html+=`<div class="order-card"><div class="order-head"><div><b>#${doc.id.slice(-6).toUpperCase()}</b> · <strong>₹${amount}</strong><div class="order-meta">${escapeHtml(o.name||"No name")} · ${escapeHtml(o.address||"No address")}<br>${escapeHtml(when)}</div></div><select class="status-select" onchange="updateOrderStatus('${doc.id}',this.value)"><option value="pending" ${status==='pending'?'selected':''}>Pending</option><option value="preparing" ${status==='preparing'?'selected':''}>Preparing</option><option value="ready" ${status==='ready'?'selected':''}>Ready</option><option value="completed" ${status==='completed'?'selected':''}>Completed</option><option value="cancelled" ${status==='cancelled'?'selected':''}>Cancelled</option></select></div><div class="order-items">${items||"No items"}${o.note?`<br>📝 ${escapeHtml(o.note)}`:""}</div><div class="order-meta">Customer UID: ${escapeHtml(o.userId||"Guest")}</div></div>`;
+   });
+   list.innerHTML=html;updateStats(snap.size,pending,done,total);
+ }catch(e){list.innerHTML=`<div class='admin-error'>Could not load orders: ${escapeHtml(e.message)}</div>`;}
+}
+function updateStats(a,b,c,d){document.getElementById("statOrders").textContent=a;document.getElementById("statPending").textContent=b;document.getElementById("statDone").textContent=c;document.getElementById("statSales").textContent="₹"+d;}
+async function updateOrderStatus(id,status){if(!adminEnabled||!db)return;try{await db.collection("orders").doc(id).update({status:status,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:auth.currentUser.uid});toast("Order status updated ✓");loadAdminOrders();}catch(e){adminMessage("Could not update order: "+e.message,"error");}}
+
+const defaultSiteSettings={kicker:'FRESH • CHATPATA • LOCAL FAVOURITE',heroTitle:'EK PURI<br><span>AUR HO JAAYE!</span>',heroLead:"Fresh pani puri and irresistible chaat, served with the familiar taste of ANKIT'S PURI & CHAAT.",hours:'3 PM – 9 PM',whatsapp:'9272021683',maps:'https://maps.app.goo.gl/nqnM21tLumqJd9XDA?g_st=aw',instagram:'https://www.instagram.com/ankitspuri.chaat?stkn=M2N6d25pcTMwZGww',announcement:'',storyTitle:"From Ankit Chat Center to ANKIT'S PURI & CHAAT.",storyText:'Your local favourite, presented as a modern food brand. This space can later tell your real story and what makes your taste special.',quote:'“Ek plate se pet nahi, dil bharta hai.” ❤️',quoteText:'Fresh • Desi • Chatpata',primary:'#e5482b',accent:'#f7c84c',showQuick:true,showCustomize:true,showCombo:true,showOffers:true,acceptOrders:true};
+let siteControl={...defaultSiteSettings};
+function showAdminSection(name,btn){document.querySelectorAll('.admin-section').forEach(x=>x.classList.remove('active'));const el=document.getElementById('adminSection-'+name);if(el)el.classList.add('active');document.querySelectorAll('.admin-tab').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active');if(name==='customersAdmin')loadAdminCustomers();}
+function applySiteSettings(){
+ const s=siteControl||defaultSiteSettings;document.documentElement.style.setProperty('--red',s.primary||'#e5482b');document.documentElement.style.setProperty('--accent',s.primary||'#e5482b');document.documentElement.style.setProperty('--accent2',s.accent||'#f7c84c');
+ const set=(id,v,html=false)=>{const el=document.getElementById(id);if(!el)return;if(html)el.innerHTML=v||'';else el.textContent=v||'';};
+ set('heroKicker',s.kicker);set('heroTitle',s.heroTitle,true);set('heroLead',s.heroLead);set('storyTitle',s.storyTitle);set('storyText',s.storyText);set('storyHours','Open daily: '+s.hours);set('quoteTitle',s.quote);set('quoteText',s.quoteText);set('contactHours','We\'re open every day from '+s.hours+'.');set('contactPhone',s.whatsapp);
+ const ann=document.getElementById('siteAnnouncement');if(ann){ann.textContent=s.announcement||'';ann.classList.toggle('show',!!s.announcement);}
+ const maps=document.querySelector('a[href^="https://maps.app.goo.gl/"]');if(maps&&s.maps)maps.href=s.maps;
+ const insta=document.querySelector('a[href*="instagram.com/ankitspuri.chaat"]');if(insta&&s.instagram)insta.href=s.instagram;
+ const qa=document.getElementById('quickActions');if(qa)qa.style.display=s.showQuick?'':'none';document.querySelectorAll('.quick-customize').forEach(x=>x.style.display=s.showCustomize===false?'none':'');document.querySelectorAll('.quick-offers').forEach(x=>x.style.display=s.showOffers?'':'none');document.querySelectorAll('.quick-combo').forEach(x=>x.style.display=s.showCombo?'':'none');
+ const combo=document.getElementById('comboStrip');if(combo)combo.style.display=s.showCombo?'':'none';
+ const dockReorder=document.querySelector('.quickdock button:nth-child(1)'),dockCombo=document.querySelector('.quickdock button:nth-child(2)'),dockOffers=document.querySelector('.quickdock button:nth-child(3)');if(dockReorder)dockReorder.style.display='';if(dockCombo)dockCombo.style.display=s.showCombo?'':'none';if(dockOffers)dockOffers.style.display=s.showOffers?'':'none';
+ const checkout=document.getElementById('checkout');if(checkout){checkout.disabled=!s.acceptOrders;checkout.style.opacity=s.acceptOrders?'1':'.55';checkout.textContent=s.acceptOrders?'💬 SEND ORDER ON WHATSAPP':'🔒 ORDERS PAUSED';}
+}
+function renderAdminSiteEditor(){const s=siteControl||defaultSiteSettings;const map={setKicker:s.kicker,setHeroTitle:s.heroTitle.replace(/<br>/g,'').replace(/<[^>]+>/g,''),setHeroLead:s.heroLead,setHours:s.hours,setWhatsApp:s.whatsapp,setMaps:s.maps,setInstagram:s.instagram,setAnnouncement:s.announcement,setStoryTitle:s.storyTitle,setStoryText:s.storyText,setQuote:s.quote,setQuoteText:s.quoteText,setPrimary:s.primary,setAccent:s.accent};Object.entries(map).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.value=v||'';});['setShowQuick','setShowCustomize','setShowCombo','setShowOffers'].forEach((id,i)=>{const el=document.getElementById(id);if(el)el.checked=[s.showQuick,s.showCustomize,s.showCombo,s.showOffers][i]!==false;});const ao=document.getElementById('adminAcceptOrders');if(ao)ao.value=String(s.acceptOrders!==false);}
+async function saveSiteControl(){if(!adminEnabled||!db)return;const val=id=>document.getElementById(id)?.value.trim()||'';siteControl={kicker:val('setKicker'),heroTitle:val('setHeroTitle'),heroLead:val('setHeroLead'),hours:val('setHours'),whatsapp:val('setWhatsApp').replace(/\D/g,''),maps:val('setMaps'),instagram:val('setInstagram'),announcement:val('setAnnouncement'),storyTitle:val('setStoryTitle'),storyText:val('setStoryText'),quote:val('setQuote'),quoteText:val('setQuoteText'),primary:val('setPrimary')||'#e5482b',accent:val('setAccent')||'#f7c84c',showQuick:document.getElementById('setShowQuick').checked,showCustomize:document.getElementById('setShowCustomize').checked,showCombo:document.getElementById('setShowCombo').checked,showOffers:document.getElementById('setShowOffers').checked,acceptOrders:document.getElementById('adminAcceptOrders').value==='true'};if(!siteControl.heroTitle.includes('<'))siteControl.heroTitle=escapeHtml(siteControl.heroTitle).replace(/\n/g,'<br>');try{await db.collection('settings').doc('site').set({...siteControl,products,offers:siteOffers,updatedAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:auth.currentUser.uid},{merge:true});WA=(siteControl.whatsapp||'9272021683').replace(/\D/g,'');if(WA.length===10)WA='91'+WA;applySiteSettings();adminMessage('Website changes published ✓');}catch(e){adminMessage('Could not publish website: '+e.message,'error');}}
+async function loadSiteSettings(){if(!db)return;try{const snap=await db.collection('settings').doc('site').get();if(snap.exists){const d=snap.data();siteControl={...defaultSiteSettings,...d};if(d.products&&typeof d.products==='object')products=d.products;if(Array.isArray(d.offers))siteOffers=d.offers;}else siteControl={...defaultSiteSettings};siteSettingsLoaded=true;WA=String(siteControl.whatsapp||'9272021683').replace(/\D/g,'');if(WA.length===10)WA='91'+WA;applySiteSettings();renderMenu();}catch(e){console.warn('Site settings',e);applySiteSettings();renderMenu();}}
+async function loadAdminCustomers(){if(!adminEnabled||!db)return;const el=document.getElementById('customersList');if(!el)return;el.innerHTML='<p class="admin-note">Loading customers…</p>';try{const snap=await db.collection('customers').limit(100).get();if(snap.empty){el.innerHTML='<div class="admin-help">No customers found.</div>';return;}let html='';snap.forEach(doc=>{const d=doc.data();html+=`<div class="customer-admin-card"><strong>${escapeHtml(d.name||'Unnamed customer')}</strong><small>📧 ${escapeHtml(d.email||'No email')}<br>📱 ${escapeHtml(d.phone||'Not provided')}<br>📍 ${escapeHtml(d.address||'No saved address')}<br>UID: ${escapeHtml(doc.id)}</small></div>`});el.innerHTML=html;}catch(e){el.innerHTML=`<div class="admin-error">Could not load customers: ${escapeHtml(e.message)}</div>`;}}
+
+function escapeHtml(v){return String(v??"").replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+setInterval(()=>{renderShopStatus();if(adminEnabled)loadAdminOrders();},60000);
+renderShopStatus();
+
+// Customer login/register (Firebase Authentication + Firestore).
+// IMPORTANT: Replace the values below with your own Firebase Web App config.
+// Free Spark-friendly customer login: Email/Password (no SMS billing required).
+const firebaseConfig = {
+  apiKey: "AIzaSyDQk-bXStUMadq1NSRNahHcd0H6MVDp-Mw",
+  authDomain: "ankits-puri-chaat.firebaseapp.com",
+  projectId: "ankits-puri-chaat",
+  storageBucket: "ankits-puri-chaat.firebasestorage.app",
+  messagingSenderId: "401153722745",
+  appId: "1:401153722745:web:3b5f6a2a33cb515eae47a8"
+};
+
+let firebaseReady = false;
+let auth = null;
+let db = null;
+let authMode = "login";
+
+try {
+  if (!firebaseConfig.apiKey.startsWith("PASTE_")) {
+    firebase.initializeApp(firebaseConfig);
+    auth = firebase.auth();
+    db = firebase.firestore();
+    firebaseReady = true;
+    loadShopMode();
+    renderMenu();
+    loadSiteSettings();
+
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      .catch(e=>console.warn('Auth persistence setup failed:',e))
+      .finally(()=>startAuthStateListener());
+
+    function startAuthStateListener(){
+      auth.onAuthStateChanged(user => {
+        const btn=document.getElementById('accountBtn'), text=document.getElementById('accountText'), profile=document.getElementById('profileBtn'), ordersBtn=document.getElementById('ordersBtn'), loginBtn=document.getElementById('loginBtn'), logout=document.getElementById('logoutBtn');
+        if(user){
+          // Unlock immediately so a slow Firestore request can never freeze the refreshed page.
+          document.body.classList.remove('auth-booting','auth-locked');
+          document.getElementById('authPage').classList.remove('open');
+          let name=user.displayName||'Customer', savedCart={};
+          btn.textContent='👤 '+(name||'Customer').split(' ')[0];
+          text.textContent='Logged in as '+(name||'Customer');
+          profile.style.display='block'; ordersBtn.style.display='block'; loginBtn.style.display='none'; logout.style.display='block';
+          (async()=>{
+            try{
+              const snap=await db.collection('customers').doc(user.uid).get();
+              if(snap.exists){
+                const d=snap.data();
+                if(d.name)name=d.name;
+                window.currentCustomerPhone=d.phone||'';
+                document.getElementById('profileName').value=d.name||name;
+                document.getElementById('profilePhone').value=d.phone||'';
+                document.getElementById('profileEmail').value=d.email||user.email||'';
+                document.getElementById('profileAddress').value=d.address||'';
+                savedCart=d.cart||{};
+              }else{
+                await db.collection('customers').doc(user.uid).set({name:user.displayName||'',email:user.email||'',phone:user.phoneNumber||'',createdAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+              }
+            }catch(e){console.warn('Customer profile load failed',e);}
+            btn.textContent='👤 '+(name||'Customer').split(' ')[0];
+            text.textContent='Logged in as '+(name||'Customer');
+            const local=readLocalCart();
+            cart=Object.keys(local).length?local:(Object.keys(savedCart).length?savedCart:{});
+            updateCart(); renderRecentOrder(); prefillOrderDetails();
+            if(document.getElementById('adminPage').classList.contains('open'))refreshAdmin();
+          })();
+        }else{
+          document.body.classList.remove('auth-booting');
+          document.body.classList.add('auth-locked');
+          btn.textContent='👤 Login'; text.textContent='Not logged in'; profile.style.display='none'; ordersBtn.style.display='none'; loginBtn.style.display='block'; logout.style.display='none';
+          document.getElementById('authPage').classList.add('open');
+          resetAuthUI();
+        }
+      });
+    }
+  }
+} catch(e) {
+  console.warn("Firebase is not configured yet.", e);
+  document.body.classList.remove('auth-booting');
+  document.body.classList.add('auth-locked');
+  const ap=document.getElementById('authPage'); if(ap)ap.classList.add('open');
+}
+
+function addNoteChip(text){const el=document.getElementById('custNote');let cur=el.value.trim();if(!cur.includes(text))el.value=cur?(cur+' • '+text):text;buildWhatsApp();toast('Note added ✓')}
+function addCombo(items){cart={};items.forEach(n=>{cart[n]=(cart[n]||0)+1});scheduleCartSave();updateCart();closeHub();openCart();toast('Combo added to cart 🔥')}
+function openHub(mode){
+ document.getElementById('hubPage').classList.add('open');document.body.style.overflow='hidden';
+ const c=document.getElementById('hubContent');
+ if(mode==='picks'){
+   const preferred=['Pani Puri','Dahi Puri','Aloo Chaat','Sev Puri','Bhel'].filter(n=>products[n]&&products[n].available!==false).slice(0,4);
+   c.innerHTML=`<div class="head" style="margin-top:28px"><h2>⭐ Smart Picks</h2><p>Quick ready-to-order picks — tap ADD and continue to checkout.</p></div><div class="combo-grid">${preferred.map(n=>{const p=products[n];return `<div class="combo"><div style="font-size:30px">🍽️</div><h3>${escapeHtml(n)}</h3><p>${escapeHtml(p.serving||'Freshly prepared')}</p><div class="combo-price">₹${Number(p.price||0)}</div><button class="btn primary" style="width:100%" onclick='add(${JSON.stringify(n)});toast(${JSON.stringify(n+' added to cart ✓')})'>ADD +</button></div>`}).join('')}</div>`;
+  }else if(mode==='combos'){
+  const combos=[{name:'Pani Puri Party',items:['Pani Puri','Pani Puri','Bhel'],emoji:'🥳'},{name:'Chaat Duo',items:['Dahi Puri','Sev Puri'],emoji:'😋'},{name:'Full Chatpata',items:['Pani Puri','Dahi Puri','Aloo Chaat'],emoji:'🔥'}].filter(x=>x.items.every(n=>products[n]&&products[n].available));
+  c.innerHTML=`<div class="head" style="margin-top:28px"><h2>🔥 Quick Combos</h2><p>One tap and your combo goes straight into the cart.</p></div><div class="combo-grid">${combos.map(x=>`<div class="combo"><div style="font-size:30px">${x.emoji}</div><h3>${x.name}</h3><p>${x.items.join(' + ')}</p><div class="combo-price">₹${x.items.reduce((t,n)=>t+products[n].price,0)}</div><button class="btn primary" style="width:100%" onclick='addCombo(${JSON.stringify(x.items)})'>ADD COMBO</button></div>`).join('')}</div>`;
+ }else{
+  const offers=siteOffers.filter(o=>o.active); let html=`<div class="head" style="margin-top:28px"><h2>🎁 Offers & Specials</h2><p>Offers jo owner ne currently ON kiye hain.</p></div>`;
+  html+=offers.length?`<div class="combo-grid">${offers.map(o=>`<div class="combo"><div style="font-size:30px">🎁</div><h3>${escapeHtml(o.title)}</h3><p>${escapeHtml(o.description||'Special offer')}</p><div class="combo-price">₹${Number(o.price||0)}</div><button class="btn primary" style="width:100%" onclick="closeHub();document.getElementById('menu').scrollIntoView({behavior:'smooth'})">VIEW MENU</button></div>`).join('')}</div>`:`<div class="hub-empty"><div style="font-size:3rem">🎁</div><h3>No active offers</h3><p>Check again later.</p></div>`;
+  c.innerHTML=html;
+ }
+}
+function closeHub(){document.getElementById('hubPage').classList.remove('open');if(!document.getElementById('cartPage').classList.contains('open')&&!document.getElementById('profilePage').classList.contains('open')&&!document.getElementById('adminPage').classList.contains('open'))document.body.style.overflow=''}
+
+
+function toggleAccountMenu(){
+  document.getElementById("accountMenu").classList.toggle("open");
+}
+function openAuth(mode="login"){
+  document.getElementById("accountMenu").classList.remove("open");
+  document.getElementById("authPage").classList.add("open");
+  document.body.classList.add("auth-locked");
+  switchAuthMode(mode||"login");
+}
+function closeAuth(){
+  if(auth&&auth.currentUser){document.getElementById("authPage").classList.remove("open");document.body.classList.remove("auth-locked");}
+  else {document.getElementById("authPage").classList.add("open");document.body.classList.add("auth-locked");}
+}
+function switchAuthMode(mode){
+  authMode=mode==='register'?'register':'login';
+  const name=document.getElementById('loginName');
+  const submit=document.getElementById('authSubmitBtn');
+  const loginBtn=document.getElementById('loginModeBtn');const regBtn=document.getElementById('registerModeBtn');
+  document.getElementById('authMsg').textContent='';
+  if(name) name.style.display=authMode==='register'?'block':'block';
+  if(name) name.placeholder=authMode==='register'?'Your full name':'Your name (optional — saved profile ke liye)';
+  if(submit) submit.textContent=authMode==='register'?'CREATE ACCOUNT & ENTER WEBSITE →':'LOGIN & ENTER WEBSITE →';
+  if(loginBtn){loginBtn.classList.toggle('primary',authMode==='login');loginBtn.classList.toggle('ghost',authMode!=='login');}
+  if(regBtn){regBtn.classList.toggle('primary',authMode==='register');regBtn.classList.toggle('ghost',authMode!=='register');}
+}
+function resetAuthUI(){
+  document.getElementById('authMsg').textContent='';
+  document.getElementById('authEmail').value='';document.getElementById('authPassword').value='';document.getElementById('loginName').value='';
+  switchAuthMode('login');
+}
+async function submitAuth(){
+  const msg=document.getElementById('authMsg'),btn=document.getElementById('authSubmitBtn');
+  if(!firebaseReady||!auth){msg.textContent='Firebase connect nahi hua. Internet/setup check karo.';return;}
+  const email=document.getElementById('authEmail').value.trim().toLowerCase();
+  const password=document.getElementById('authPassword').value;
+  const enteredName=document.getElementById('loginName').value.trim();
+  if(!/^\S+@\S+\.\S+$/.test(email)){msg.textContent='Valid email address dalo.';return;}
+  if(password.length<6){msg.textContent='Password minimum 6 characters ka hona chahiye.';return;}
+  if(authMode==='register'&&!enteredName){msg.textContent='Pehle apna naam dalo.';return;}
+  btn.disabled=true;msg.textContent=authMode==='register'?'Account ban raha hai…':'Login ho raha hai…';
+  try{
+    await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    let cred;
+    if(authMode==='register'){
+      cred=await auth.createUserWithEmailAndPassword(email,password);
+      await cred.user.updateProfile({displayName:enteredName});
+      await db.collection('customers').doc(cred.user.uid).set({name:enteredName,email,phone:'',createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+      msg.textContent='Account created ✓';
+    }else{
+      cred=await auth.signInWithEmailAndPassword(email,password);
+      if(enteredName){await db.collection('customers').doc(cred.user.uid).set({name:enteredName,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});await cred.user.updateProfile({displayName:enteredName});}
+      msg.textContent='Login successful ✓';
+    }
+    setTimeout(()=>closeAuth(),250);
+  }catch(e){
+    let m=(e&&e.message?e.message:'Authentication failed').replace('Firebase: ','');
+    if(e&&e.code==='auth/email-already-in-use')m='Ye email already registered hai. LOGIN tab use karo.';
+    if(e&&e.code==='auth/wrong-password')m='Password galat hai.';
+    if(e&&e.code==='auth/user-not-found')m='Is email se account nahi mila. REGISTER karo.';
+    if(e&&e.code==='auth/invalid-credential')m='Email ya password galat hai.';
+    msg.textContent=m;
+  }finally{btn.disabled=false;}
+}
+
+async function completeCustomerProfile(){
+ const user=auth&&auth.currentUser, name=document.getElementById('firstName')?.value.trim(), msg=document.getElementById('nameMsg');
+ if(!user||!db)return;
+ if(!name){if(msg)msg.textContent='Apna naam bhar do.';return;}
+ try{await user.updateProfile({displayName:name});await db.collection('customers').doc(user.uid).set({name,email:user.email||'',phone:user.phoneNumber||'',updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});closeAuth();toast('Welcome, '+name.split(' ')[0]+' 👋');}catch(e){if(msg)msg.textContent=e.message.replace('Firebase: ','');}
+}
+
+async function customerLogout(){
+  writeLocalCart();
+  if(auth) await auth.signOut();
+  document.getElementById("accountMenu").classList.remove("open");
+  closeProfile();
+  toast("Logged out ✓");
+  if(document.getElementById("adminPage").classList.contains("open")) refreshAdmin();
+}
+
+async function saveCustomerProfile(){
+ const user=auth&&auth.currentUser;if(!user||!db){openAuth("login");return;}
+ const name=document.getElementById("profileName").value.trim();
+ const phone=document.getElementById("profilePhone").value.trim();
+ const address=document.getElementById("profileAddress").value.trim();
+ const msg=document.getElementById("profileMsg");
+ if(!name){msg.textContent="Apna naam bhar do.";return;}
+ try{
+   await user.updateProfile({displayName:name});
+   await db.collection("customers").doc(user.uid).set({name,phone,email:user.email||"",address,cart:cart},{merge:true});
+   window.currentCustomerPhone=phone;
+   document.getElementById("custName").value=name;
+   document.getElementById("custAddress").value=address;
+   buildWhatsApp();
+   msg.textContent="Details saved ✓";toast("Profile saved ✓");
+ }catch(e){msg.textContent=e.message.replace("Firebase: ","");}
+}
+function openProfile(tab="profile"){
+ if(!(auth&&auth.currentUser)){openAuth("login");return;}
+ document.getElementById("accountMenu").classList.remove("open");
+ document.getElementById("profilePage").classList.add("open");document.body.style.overflow="hidden";
+ loadCustomerProfile();showProfileTab(tab);
+}
+function closeProfile(){document.getElementById("profilePage").classList.remove("open");if(!document.getElementById("cartPage").classList.contains("open")&&!document.getElementById("adminPage").classList.contains("open"))document.body.style.overflow="";}
+function showProfileTab(tab){
+ const p=tab==="profile";document.getElementById("profilePanel").style.display=p?"block":"none";document.getElementById("ordersPanel").style.display=p?"none":"block";
+ document.getElementById("profileTab").classList.toggle("active",p);document.getElementById("ordersTab").classList.toggle("active",!p);
+ if(!p)loadCustomerOrders();
+}
+async function loadCustomerProfile(){
+ const user=auth&&auth.currentUser;if(!user||!db)return;
+ try{const snap=await db.collection("customers").doc(user.uid).get();if(snap.exists){const d=snap.data();document.getElementById("profileName").value=d.name||user.displayName||"";document.getElementById("profilePhone").value=d.phone||"";document.getElementById("profileEmail").value=d.email||user.email||"";document.getElementById("profileAddress").value=d.address||"";window.currentCustomerPhone=d.phone||"";}}catch(e){}
+ loadCustomerOrders(true);
+}
+async function loadCustomerOrders(silent=false){
+ const user=auth&&auth.currentUser;if(!user||!db)return;
+ const list=document.getElementById("customerOrdersList");if(!silent)list.innerHTML='<p class="admin-note">Loading your orders…</p>';
+ try{
+   const snap=await db.collection("orders").where("userId","==",user.uid).get();
+   const docs=snap.docs.slice().sort((a,b)=>{
+     const ta=a.data().createdAt, tb=b.data().createdAt;
+     const av=ta&&ta.toMillis?ta.toMillis():0, bv=tb&&tb.toMillis?tb.toMillis():0;
+     return bv-av;
+   }).slice(0,50);
+   let spent=0,points=0,html="";
+   docs.forEach(doc=>{const o=doc.data(),amount=Number(o.total||0);spent+=amount;if(o.status==="completed")points+=Math.floor(amount/10);const items=(o.items||[]).map(i=>`${escapeHtml(i.name)} × ${i.qty} — ₹${i.lineTotal}`).join("<br>");const ts=o.createdAt&&o.createdAt.toDate?o.createdAt.toDate().toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short"}):"Just now";const status=escapeHtml(o.status||"pending");html+=`<div class="customer-order-card"><div class="customer-order-head"><div><strong>Order #${doc.id.slice(-6).toUpperCase()}</strong><div class="order-meta">${escapeHtml(ts)}</div></div><span class="order-badge">${status}</span></div><div class="customer-order-items">${items||"No items"}<hr style="border:0;border-top:1px solid var(--line);margin:8px 0"><strong>Total: ₹${amount}</strong></div><button class="btn ghost" style="padding:9px 12px" onclick='reorderFromHistory(${JSON.stringify(o.items||[])})'>🔁 ORDER AGAIN</button></div>`;});
+   document.getElementById("profileOrderCount").textContent=docs.length;document.getElementById("profileSpent").textContent="₹"+spent;document.getElementById("profilePoints").textContent=points;
+   list.innerHTML=html||'<div class="empty" style="padding:35px 10px"><div style="font-size:3rem">🧾</div><h3>No orders yet</h3><p>Your completed and recent orders will appear here.</p><button class="btn primary" onclick="closeProfile();document.getElementById(&quot;menu&quot;).scrollIntoView({behavior:&quot;smooth&quot;})">ORDER NOW</button></div>';
+ }catch(e){list.innerHTML=`<div class="admin-error">Could not load orders: ${escapeHtml(e.message)}</div>`;}
+}
+function reorderFromHistory(items){
+ cart={};(items||[]).forEach(i=>{if(products[i.name])cart[i.name]=Number(i.qty||1);});scheduleCartSave();updateCart();closeProfile();openCart();toast("Previous order loaded ✓");
+}
+
+cart=readLocalCart();
+updateCart();renderRecentOrder();
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(err => console.log('PWA service worker:', err));
+  });
+}
+</script>
+
+<style>
+/* ===== ANKIT'S PURI & CHAAT – FEATURE PACK ===== */
+.feature-modal{position:fixed;inset:0;background:#0008;z-index:220;display:none;align-items:flex-end;justify-content:center;padding:14px}.feature-modal.open{display:flex}.feature-sheet{width:min(720px,100%);max-height:88vh;overflow:auto;background:#fffaf1;border-radius:26px 26px 14px 14px;padding:20px;box-shadow:0 25px 90px #0005}.feature-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px}.feature-head h2{margin:0}.feature-close{border:0;background:#21140f;color:#fff;width:38px;height:38px;border-radius:50%;font-size:20px}.option-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.option-card{border:1px solid var(--line);background:#fff;border-radius:15px;padding:12px;cursor:pointer}.option-card.selected{border-color:#24130b;background:#fff0d2;box-shadow:0 0 0 2px #24130b18}.feature-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.feature-btn{border:0;border-radius:12px;padding:11px 14px;font-weight:900;cursor:pointer}.feature-btn.dark{background:#21140f;color:#fff}.feature-btn.light{background:#fff;border:1px solid var(--line)}.feature-section{margin:14px 0;padding:15px;background:#fff;border:1px solid var(--line);border-radius:18px}.timeline{display:grid;gap:10px}.timeline-step{display:flex;gap:12px;align-items:center}.timeline-dot{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#eadfd4;font-size:13px;font-weight:900}.timeline-step.active .timeline-dot{background:#24130b;color:#fff}.timeline-step.done .timeline-dot{background:#2ca24d;color:#fff}.address-card{border:1px solid var(--line);border-radius:15px;padding:12px;background:#fff;margin:8px 0}.badge-new{display:inline-block;background:#f7c84c;color:#24130b;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:900}.soldout-label{display:inline-block;background:#f3dfdb;color:#9f2516;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:900}.custom-row{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.custom-row:last-child{border-bottom:0}.custom-row select,.custom-row input,.feature-sheet textarea{padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff;font:inherit}.reorder-mini{display:flex;gap:8px;flex-wrap:wrap}.reorder-mini button{border:1px solid var(--line);background:#fff;border-radius:12px;padding:9px 11px;font-weight:800}.feature-toast{position:fixed;left:50%;bottom:82px;transform:translateX(-50%);z-index:300;background:#21140f;color:#fff;padding:11px 15px;border-radius:999px;font-size:12px;font-weight:800;display:none;box-shadow:0 12px 30px #0003}.feature-toast.show{display:block}.share-card{background:linear-gradient(135deg,#24130b,#5b2816);color:#fff;border-radius:20px;padding:18px}.share-card p{color:#d9c8b8}.history-card{background:#fff;border:1px solid var(--line);border-radius:17px;padding:15px;margin:10px 0}.history-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.price-big{font-size:20px;font-weight:950}.soldout-btn{opacity:.55;pointer-events:none}@media(max-width:560px){.option-grid{grid-template-columns:1fr}.feature-sheet{padding:16px}.custom-row{align-items:flex-start;flex-direction:column}.feature-row>*{flex:1}}
+</style>
+<div class="feature-modal" id="featureModal" onclick="if(event.target===this)closeFeatureModal()"><div class="feature-sheet"><div class="feature-head"><h2 id="featureTitle">Feature</h2><button class="feature-close" onclick="closeFeatureModal()">×</button></div><div id="featureBody"></div></div></div>
+<div class="feature-toast" id="featureToast"></div>
+<script>
+/* ===== FEATURE PACK JS: local-first, Firebase-compatible ===== */
+(function(){
+ const ADDR_KEY='ankitSavedAddresses', CUSTOM_KEY='ankitCustomOptions', TIMING_KEY='ankitOrderTiming';
+window.openCustomizerFromHub=()=>{closeHub();document.getElementById('menu').scrollIntoView({behavior:'smooth'});setTimeout(()=>{const c=document.querySelector('.customize-btn:not([disabled])');if(c)c.click();else featureToast('Menu item select karke CUSTOMIZE dabao');},450)};
+ const get=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}};
+ const set=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+ window.closeFeatureModal=()=>document.getElementById('featureModal')?.classList.remove('open');
+ window.featureModal=(title,html)=>{document.getElementById('featureTitle').textContent=title;document.getElementById('featureBody').innerHTML=html;document.getElementById('featureModal').classList.add('open')};
+ window.featureToast=(m)=>{const e=document.getElementById('featureToast');if(!e)return;e.textContent=m;e.classList.add('show');clearTimeout(window.__ft);window.__ft=setTimeout(()=>e.classList.remove('show'),1800)};
+ window.openCustomizer=(name)=>{
+   const p=(window.products&&window.products[name])||{};
+   const c=get(CUSTOM_KEY,{}); const old=c[name]||{};
+   featureModal('🌶️ Customize '+name,`<div class="feature-section"><div class="custom-row"><b>Spicy level</b><select id="cxSpicy"><option ${old.spicy==='Normal'?'selected':''}>Normal</option><option ${old.spicy==='Spicy'?'selected':''}>Spicy</option><option ${old.spicy==='Extra Spicy'?'selected':''}>Extra Spicy</option></select></div><div class="custom-row"><b>Sweetness</b><select id="cxSweet"><option ${old.sweet==='Normal'?'selected':''}>Normal</option><option ${old.sweet==='More Sweet'?'selected':''}>More Sweet</option></select></div><div class="custom-row"><b>Pani</b><select id="cxWater"><option ${old.water==='Normal'?'selected':''}>Normal</option><option ${old.water==='Extra Pani'?'selected':''}>Extra Pani</option></select></div><div class="custom-row"><b>Onion</b><select id="cxOnion"><option ${old.onion!=='No Onion'?'selected':''}>With Onion</option><option ${old.onion==='No Onion'?'selected':''}>No Onion</option></select></div><div class="custom-row"><b>Chutney</b><select id="cxChutney"><option ${old.chutney!=='Extra Chutney'?'selected':''}>Normal</option><option ${old.chutney==='Extra Chutney'?'selected':''}>Extra Chutney</option></select></div><textarea id="cxNote" rows="2" placeholder="Extra note (optional)">${old.note||''}</textarea></div><div class="feature-row"><button class="feature-btn dark" onclick="saveCustomization(${JSON.stringify(name)})">SAVE & ADD TO CART</button><button class="feature-btn light" onclick="closeFeatureModal()">Cancel</button></div>`);
+ };
+ window.saveCustomization=(name)=>{const c=get(CUSTOM_KEY,{});c[name]={spicy:cxSpicy.value,sweet:cxSweet.value,water:cxWater.value,onion:cxOnion.value==='No Onion'?'No Onion':'With Onion',chutney:cxChutney.value==='Extra Chutney'?'Extra Chutney':'Normal',note:cxNote.value.trim()};set(CUSTOM_KEY,c);try{add(name)}catch(e){};closeFeatureModal();featureToast(name+' customized ✓')};
+ window.openSavedAddresses=()=>{const a=get(ADDR_KEY,[]);featureModal('📍 Saved Addresses',`<div id="addrList">${a.map((x,i)=>`<div class="address-card"><b>${escapeHtml(x.label)}</b><div>${escapeHtml(x.address)}</div><small>${escapeHtml(x.name||'')}</small><div class="feature-row" style="margin-top:8px"><button class="feature-btn dark" onclick="useSavedAddress(${i})">USE</button><button class="feature-btn light" onclick="deleteSavedAddress(${i})">DELETE</button></div></div>`).join('')||'<p class="admin-note">No saved addresses yet.</p>'}</div><div class="feature-section"><input id="addrLabel" class="field" placeholder="Label: Home / Other"><input id="addrName" class="field" placeholder="Name" style="margin-top:8px"><textarea id="addrText" rows="3" placeholder="Full delivery address" style="width:100%;margin-top:8px"></textarea></div><button class="feature-btn dark" onclick="saveAddress()">＋ SAVE ADDRESS</button>`)};
+ window.saveAddress=()=>{const label=addrLabel.value.trim()||'Other',name=addrName.value.trim(),address=addrText.value.trim();if(!address){featureToast('Address likho');return}const a=get(ADDR_KEY,[]);a.push({label,name,address});set(ADDR_KEY,a);openSavedAddresses();featureToast('Address saved ✓')};
+ window.deleteSavedAddress=(i)=>{const a=get(ADDR_KEY,[]);a.splice(i,1);set(ADDR_KEY,a);openSavedAddresses()};
+ window.useSavedAddress=(i)=>{const a=get(ADDR_KEY,[])[i];if(!a)return;localStorage.setItem('ankitPrefillAddress',a.address);localStorage.setItem('ankitPrefillName',a.name||'');closeFeatureModal();try{openCart()}catch(e){};setTimeout(()=>{const ad=document.querySelector('#orderAddress,textarea[name="address"],input[name="address"]');const nm=document.querySelector('#custName,input[name="name"]');if(ad)ad.value=a.address;if(nm)nm.value=a.name||''},250);featureToast('Address selected ✓')};
+ window.openTiming=()=>{const t=get(TIMING_KEY,'ASAP');featureModal('⏰ Order Timing',`<div class="option-grid">${['ASAP','15 minutes','30 minutes','45 minutes'].map(x=>`<div class="option-card ${t===x?'selected':''}" onclick="saveTiming(${JSON.stringify(x)})">⏱️ <b>${x}</b><br><small>Ready time preference</small></div>`).join('')}</div><p class="admin-note" style="margin-top:12px">Timing customer preference ke roop mein order ke saath save/share hoga.</p>`)};
+ window.saveTiming=(x)=>{set(TIMING_KEY,x);closeFeatureModal();featureToast('Timing: '+x+' ✓')};
+ window.openShareMenu=()=>{featureModal('📤 Share Menu',`<div class="share-card"><h3>ANKIT'S PURI & CHAAT</h3><p>Fresh • Chatpata • Ready to order</p><button class="feature-btn" style="background:#f7c84c;color:#24130b" onclick="shareMenuNow()">SHARE MENU</button></div>`)};
+ window.shareMenuNow=async()=>{const url=location.href;const txt="ANKIT'S PURI & CHAAT 🍽️\nMenu & Order: "+url;try{if(navigator.share)await navigator.share({title:"ANKIT'S PURI & CHAAT",text:txt,url});else await navigator.clipboard.writeText(txt);featureToast(navigator.share?'Shared ✓':'Menu link copied ✓')}catch(e){}};
+ window.openOrderHistory=()=>{featureModal('📦 My Orders',`<div id="featureHistory"><p class="admin-note">Loading orders…</p></div>`);loadFeatureOrders()};
+ async function loadFeatureOrders(){const el=document.getElementById('featureHistory');if(!el)return;try{if(!window.db||!window.auth||!auth.currentUser){el.innerHTML='<p class="admin-note">Login karke order history dekho.</p>';return}const snap=await db.collection('orders').where('userId','==',auth.currentUser.uid).orderBy('createdAt','desc').limit(20).get();if(snap.empty){el.innerHTML='<p class="admin-note">Abhi koi order nahi hai.</p>';return}el.innerHTML=snap.docs.map(d=>{const o=d.data();return `<div class="history-card"><div class="history-head"><b>#${escapeHtml(d.id.slice(-6))}</b><span class="badge-new">${escapeHtml(o.status||'Pending')}</span></div><div>${(o.items||[]).map(i=>escapeHtml(i.name)+' × '+i.qty).join(', ')}</div><div class="feature-row" style="margin-top:9px"><span class="price-big">₹${Number(o.total||0)}</span><button class="feature-btn light" onclick='reorderFeature(${JSON.stringify(o.items||[])})'>⭐ PICKS</button><button class="feature-btn light" onclick='showOrderTimeline(${JSON.stringify(o.status||"Pending")})'>TRACK</button></div></div>`}).join('')}catch(e){el.innerHTML='<p class="admin-note">Order history load nahi ho paayi.</p>'}}
+ window.reorderFeature=(items)=>{try{(items||[]).forEach(i=>{if(window.products?.[i.name] && window.products[i.name].available!==false){for(let n=0;n<Number(i.qty||1);n++)add(i.name)}});closeFeatureModal();featureToast('Previous order cart mein add ✓')}catch(e){featureToast('Reorder failed')}};
+ window.showOrderTimeline=(status)=>{const steps=['Pending','Preparing','Ready','Completed'];const idx=steps.indexOf(status);featureModal('📍 Order Status',`<div class="timeline">${steps.map((x,i)=>`<div class="timeline-step ${i<idx?'done':''} ${i===idx?'active':''}"><span class="timeline-dot">${i<idx?'✓':i+1}</span><div><b>${x}</b><br><small>${i===idx?'Current status':''}</small></div></div>`).join('')}</div>`)}; // Add a customize button to every available menu item without changing the original design.
+ const oldRenderMenu=window.renderMenu; if(typeof oldRenderMenu==='function'){window.renderMenu=function(){oldRenderMenu.apply(this,arguments);document.querySelectorAll('.menu-item').forEach(card=>{const addBtn=card.querySelector('.add');if(!addBtn||addBtn.disabled||card.querySelector('.customize-btn'))return;const name=card.querySelector('h3')?.textContent?.trim();if(!name)return;const b=document.createElement('button');b.className='add customize-btn';b.style.marginLeft='6px';b.textContent='CUSTOMIZE';b.onclick=()=>openCustomizer(name);addBtn.parentNode.appendChild(b)})}}
+ // Make quick hub richer while preserving its existing entry points.
+ const oldOpenHub=window.openHub; if(typeof oldOpenHub==='function'){window.openHub=function(mode){if(mode==='saved'){openSavedAddresses();return}if(mode==='timing'){openTiming();return}if(mode==='share'){openShareMenu();return}if(mode==='history'){openOrderHistory();return}return oldOpenHub.apply(this,arguments)}}
+})();
+</script>
+</body>
+</html>
